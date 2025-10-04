@@ -1,6 +1,5 @@
-package com.soulware.tcompro.ui.theme
+package com.soulware.tcompro.core.ui.theme
 
-import android.app.Activity
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
@@ -11,16 +10,20 @@ import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
 
-private val DarkColorScheme = darkColorScheme(
-    primary = Purple80,
-    secondary = PurpleGrey80,
-    tertiary = Pink80
+private val darkScheme = darkColorScheme(
+    primary = mainColor,
+    secondary = accentColor,
+    surfaceContainerLow = brandText,
+    surfaceContainer = lowerTone,
+    surfaceContainerHigh = regularBlack
 )
 
-private val LightColorScheme = lightColorScheme(
-    primary = Purple40,
-    secondary = PurpleGrey40,
-    tertiary = Pink40
+private val lightScheme = lightColorScheme(
+    primary = mainColor,
+    secondary = accentColor,
+    surfaceContainerLow = brandText,
+    surfaceContainer = lowerTone,
+    surfaceContainerHigh = regularBlack
 
     /* Other default colors to override
     background = Color(0xFFFFFBFE),
@@ -46,8 +49,8 @@ fun TcomproTheme(
             if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
         }
 
-        darkTheme -> DarkColorScheme
-        else -> LightColorScheme
+        darkTheme -> darkScheme
+        else -> lightScheme
     }
 
     MaterialTheme(
