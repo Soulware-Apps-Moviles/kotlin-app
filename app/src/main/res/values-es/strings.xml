@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">TCompro</string>
+    <!--Tabs and navigation-->
+        <!--Labels-->
+        <string name="label_login">Login</string>
+        <string name="label_orders">Pedidos</string>
+        <string name="label_inventory">Inventario</string>
+        <string name="label_shop">Mi Tienda</string>
+        <string name="label_finances">Finanzas</string>
+        <string name="label_settings">Ajustes</string>
+        <!--Accessibility-->
+        <string name="desc_orders_tab">Recibir, procesar y despachar pedidos de clientes</string>
+        <string name="desc_inventory_tab">Gestionar inventario, añadir artículos del catálogo y configurar ofertas especiales</string>
+        <string name="desc_shop_tab">Administrar políticas de la tienda, añadir empleados y clientes de confianza</string>
+        <string name="desc_finances_tab">Revisar transacciones, seguimiento de pagos y gestión de balance e informes</string>
+        <string name="desc_settings_tab">Configurar preferencias de la aplicación, notificaciones y seguridad</string>
+        <!--Errors-->
+        <string name="error_invalid_tab">Ruta de pestaña inválida</string>
+</resources>

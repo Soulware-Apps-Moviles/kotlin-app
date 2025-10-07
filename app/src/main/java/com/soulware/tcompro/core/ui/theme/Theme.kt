@@ -1,57 +1,48 @@
 package com.soulware.tcompro.core.ui.theme
 
-import android.os.Build
-import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.darkColorScheme
-import androidx.compose.material3.dynamicDarkColorScheme
-import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.platform.LocalContext
 
-private val darkScheme = darkColorScheme(
-    primary = mainColor,
-    secondary = accentColor,
-    surfaceContainerLow = brandText,
-    surfaceContainer = lowerTone,
-    surfaceContainerHigh = regularBlack
-)
+import androidx.compose.ui.graphics.Color
 
-private val lightScheme = lightColorScheme(
-    primary = mainColor,
-    secondary = accentColor,
-    surfaceContainerLow = brandText,
-    surfaceContainer = lowerTone,
-    surfaceContainerHigh = regularBlack
+val LightGray = Color(0xFFF2F2F2)
+val MediumGray = Color(0xFF757575)
 
-    /* Other default colors to override
-    background = Color(0xFFFFFBFE),
-    surface = Color(0xFFFFFBFE),
+val lightScheme: ColorScheme = lightColorScheme(
+    primary = TComproOrange,
     onPrimary = Color.White,
+    primaryContainer = TComproOrange,
+    onPrimaryContainer = Color.White,
+
+    secondary = TComproOrange,
     onSecondary = Color.White,
-    onTertiary = Color.White,
-    onBackground = Color(0xFF1C1B1F),
-    onSurface = Color(0xFF1C1B1F),
-    */
+    secondaryContainer = LightGray,
+    onSecondaryContainer = TComproBlack,
+
+    surface = Color.White,
+    onSurface = TComproBlack,
+    background = Color.White,
+    onBackground = TComproBlack,
+    surfaceContainerHighest = TComproBlack,
+
+    surfaceVariant = softWhite,
+    onSurfaceVariant = TComproBlack,
+
+    error = errorRed,
+    onError = Color.White,
+    errorContainer = softErrorRed,
+    onErrorContainer = TComproBlack,
+    tertiary = TComproOrange,
+    onTertiary = Color.White
 )
 
 @Composable
 fun TcomproTheme(
-    darkTheme: Boolean = isSystemInDarkTheme(),
-    // Dynamic color is available on Android 12+
-    dynamicColor: Boolean = true,
     content: @Composable () -> Unit
 ) {
-    val colorScheme = when {
-        dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
-            val context = LocalContext.current
-            if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
-        }
-
-        darkTheme -> darkScheme
-        else -> lightScheme
-    }
+    val colorScheme = lightScheme
 
     MaterialTheme(
         colorScheme = colorScheme,

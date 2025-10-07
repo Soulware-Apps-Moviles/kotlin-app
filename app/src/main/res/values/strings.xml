@@ -1,3 +1,19 @@
 <resources>
-    <string name="app_name">Tcompro</string>
+    <string name="app_name" translatable="false">TCompro</string>
+    <!--Tabs and navigation-->
+        <!--Labels-->
+        <string name="label_login">Login</string>
+        <string name="label_orders">Orders</string>
+        <string name="label_inventory">Inventory</string>
+        <string name="label_shop">My Shop</string>
+        <string name="label_finances">Finances</string>
+        <string name="label_settings">Settings</string>
+        <!--Accessibility-->
+        <string name="desc_orders_tab">Receive, process, and dispatch customer orders</string>
+        <string name="desc_inventory_tab">Manage inventory, add catalog items, and set up special offers</string>
+        <string name="desc_shop_tab">Manage shop policies, add employees, and trusted customers</string>
+        <string name="desc_finances_tab">Review transactions, track payments, and manage balance and reports</string>
+        <string name="desc_settings_tab">Configure app preferences, notifications and security</string>
+        <!--Errors-->
+        <string name="error_invalid_tab">Invalid tab route</string>
 </resources>

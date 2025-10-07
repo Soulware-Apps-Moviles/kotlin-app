@@ -1,50 +1,30 @@
 package com.soulware.tcompro.core
 
+import androidx.annotation.StringRes
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.compose.ui.res.stringResource
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.soulware.tcompro.core.ui.theme.TcomproTheme
-import com.soulware.tcompro.features.orders.presentation.Order
-import com.soulware.tcompro.features.shop.presentation.Shop
-import com.soulware.tcompro.features.shop.presentation.ShopViewModel
+import com.soulware.tcompro.R
 
 @Composable
-fun AppNav(){
+fun AppNav() {
     val navController = rememberNavController()
-    val viewModel: ShopViewModel = hiltViewModel()
-    NavHost(navController, startDestination = Route.Shop.route){
 
-        composable(Route.Shop.route)
-        {
-            Shop(viewModel) {
-                navController.navigate(Route.Orders.route)
-            }
+    NavHost(navController, startDestination = Route.Shop.route) {
+
+        composable(Route.Shop.route) {
+            MainContainer(rootNavController = navController)
         }
-        composable(Route.Orders.route)
-        {
-            Order {  }
-        }
-    }
-
-    Main {  }
-}
-
-@Preview
-@Composable
-fun AppNavPreview(){
-    TcomproTheme {
-        AppNav()
     }
 }
 
-sealed class Route(val route: String){
-    object Login : Route("login")
-    object Orders : Route("orders")
-    object Inventory : Route("inventory")
-    object Shop : Route("shop")
-    object Finances : Route("finances")
-    object Settings : Route("settings")
+sealed class Route(val route: String, @param:StringRes val labelResId: Int){
+    object Login : Route("login", R.string.label_login)
+    object Orders : Route("orders", R.string.label_orders)
+    object Inventory : Route("inventory", R.string.label_inventory)
+    object Shop : Route("shop", R.string.label_shop)
+    object Finances : Route("finances", R.string.label_finances)
+    object Settings : Route("settings", R.string.label_settings)
 }
