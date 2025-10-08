@@ -2,6 +2,7 @@
 <resources>
     <!--App-->
     <string name="app_name" translatable="false">T\'Compro</string>
+    <string name="app_subversion">bodegas</string>
     <string name="app_logo_description">Cuy de T\'Compro</string>
     <!--Tabs and navigation-->
         <!--Labels-->
@@ -47,4 +48,12 @@
         <string name="status_picked_up">Recogido</string>
         <string name="status_dispatched">Enviado</string>
         <string name="status_delivered">Entregado</string>
+
+    <!--Placeholders-->
+    <string name="placeholder_incoming_orders">Incoming Orders Content</string>
+    <string name="placeholder_pending_orders">Pending Orders Content</string>
+    <string name="placeholder_trusted_customers">Trusted Customers Content</string>
+    <string name="placeholder_staff">Staff Management Content</string>
+    <string name="placeholder_inventory">Inventory Management Content</string>
+    <string name="placeholder_catalog">Product Catalog Content</string>
 </resources>
