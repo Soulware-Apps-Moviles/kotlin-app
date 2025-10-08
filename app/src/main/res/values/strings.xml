@@ -4,12 +4,16 @@
     <string name="app_logo_description">T\'Compro\'s guinea pig</string>
     <!--Tabs and navigation-->
         <!--Labels-->
-        <string name="label_login">Login</string>
-        <string name="label_orders">Orders</string>
-        <string name="label_inventory">Inventory</string>
-        <string name="label_shop">My Shop</string>
-        <string name="label_finances">Finances</string>
-        <string name="label_settings">Settings</string>
+            <!--Main-->
+            <string name="label_login">Login</string>
+            <string name="label_orders">Orders</string>
+            <string name="label_inventory">Inventory</string>
+            <string name="label_shop">My Shop</string>
+            <string name="label_finances">Finances</string>
+            <string name="label_settings">Settings</string>
+            <!--Orders-->
+            <string name="label_incoming_orders">Incoming</string>
+            <string name="label_pending_orders">Pending</string>
         <!--Accessibility-->
         <string name="desc_orders_tab">Receive, process, and dispatch customer orders</string>
         <string name="desc_inventory_tab">Manage inventory, add catalog items, and set up special offers</string>

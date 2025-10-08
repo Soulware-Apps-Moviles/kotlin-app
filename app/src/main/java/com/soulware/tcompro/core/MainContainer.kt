@@ -1,14 +1,9 @@
 package com.soulware.tcompro.core
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
+import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.statusBars
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AllInbox
-import androidx.compose.material.icons.filled.Error
 import androidx.compose.material.icons.filled.Inbox
 import androidx.compose.material.icons.filled.Savings
 import androidx.compose.material.icons.filled.Settings
@@ -27,35 +22,38 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.soulware.tcompro.R
 import com.soulware.tcompro.core.ui.components.LogoContent
+import com.soulware.tcompro.features.orders.presentation.orders.OrdersScreen
 
-data class NavigationItem(
-    val icon: ImageVector,
-    val route: String
-)
+sealed class MainTabRoute(
+    override val route: String,
+    @get:StringRes override val labelResId: Int
+) : ITabRoute {
+    object Orders : MainTabRoute("orders_tab", R.string.label_orders)
+    object Inventory : MainTabRoute("inventory_tab", R.string.label_inventory)
+    object Shop : MainTabRoute("shop_tab", R.string.label_shop)
+    object Finances : MainTabRoute("finances_tab", R.string.label_finances)
+    object Settings : MainTabRoute("settings_tab", R.string.label_settings)
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MainContainer(rootNavController: NavController, logoImageResId: Int) {
-    val bottomNavController = rememberNavController()
-
+fun MainContainer(logoImageResId: Int) {
     val navigationItems = listOf(
-        Route.Orders,
-        Route.Inventory,
-        Route.Shop,
-        Route.Finances,
-        Route.Settings
+        MainTabRoute.Orders,
+        MainTabRoute.Inventory,
+        MainTabRoute.Shop,
+        MainTabRoute.Finances,
+        MainTabRoute.Settings
     )
 
+    val bottomNavController = rememberNavController()
     val currentDestination by bottomNavController.currentBackStackEntryAsState()
     val currentRoute = currentDestination?.destination?.route
 
@@ -95,35 +93,30 @@ fun MainContainer(rootNavController: NavController, logoImageResId: Int) {
                             }
 
                             when (item) {
-                                is Route.Orders -> Icon(
+                                is MainTabRoute.Orders -> Icon(
                                     Icons.Default.AllInbox,
                                     stringResource(R.string.desc_orders_tab),
                                     tint = tintColor
                                 )
-                                is Route.Inventory -> Icon(
+                                is MainTabRoute.Inventory -> Icon(
                                     Icons.Default.Inbox,
                                     stringResource(R.string.desc_inventory_tab),
                                     tint = tintColor
                                 )
-                                is Route.Shop -> Icon(
+                                is MainTabRoute.Shop -> Icon(
                                     Icons.Default.Storefront,
                                     stringResource(R.string.desc_shop_tab),
                                     tint = tintColor
                                 )
-                                is Route.Finances -> Icon(
+                                is MainTabRoute.Finances -> Icon(
                                     Icons.Default.Savings,
                                     stringResource(R.string.desc_finances_tab),
                                     tint = tintColor
                                 )
-                                is Route.Settings -> Icon(
+                                is MainTabRoute.Settings -> Icon(
                                     Icons.Default.Settings,
                                     stringResource(R.string.desc_settings_tab),
                                     tint = tintColor
-                                )
-                                else -> Icon(
-                                    Icons.Default.Error,
-                                    stringResource(R.string.error_invalid_tab),
-                                    tint = MaterialTheme.colorScheme.error
                                 )
                             }
                         },
@@ -135,14 +128,14 @@ fun MainContainer(rootNavController: NavController, logoImageResId: Int) {
     ) { paddingValues ->
         NavHost(
             navController = bottomNavController,
-            startDestination = Route.Shop.route,
+            startDestination = MainTabRoute.Orders.route,
             modifier = Modifier.padding(paddingValues)
         ) {
-            composable(Route.Shop.route) { }
-            composable(Route.Orders.route) { }
-            composable(Route.Inventory.route) { }
-            composable(Route.Finances.route) { }
-            composable(Route.Settings.route) { }
+            composable(MainTabRoute.Orders.route) { }
+            composable(MainTabRoute.Inventory.route) { }
+            composable(MainTabRoute.Shop.route) { }
+            composable(MainTabRoute.Finances.route) { }
+            composable(MainTabRoute.Settings.route) { }
         }
     }
 }

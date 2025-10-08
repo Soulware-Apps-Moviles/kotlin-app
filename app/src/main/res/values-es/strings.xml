@@ -5,12 +5,16 @@
     <string name="app_logo_description">Cuy de T\'Compro</string>
     <!--Tabs and navigation-->
         <!--Labels-->
-        <string name="label_login">Login</string>
-        <string name="label_orders">Pedidos</string>
-        <string name="label_inventory">Inventario</string>
-        <string name="label_shop">Mi Tienda</string>
-        <string name="label_finances">Finanzas</string>
-        <string name="label_settings">Ajustes</string>
+            <!--Main-->
+            <string name="label_login">Login</string>
+            <string name="label_orders">Pedidos</string>
+            <string name="label_inventory">Inventario</string>
+            <string name="label_shop">Mi Tienda</string>
+            <string name="label_finances">Finanzas</string>
+            <string name="label_settings">Ajustes</string>
+            <!--Orders-->
+            <string name="label_incoming_orders">Entrantes</string>
+            <string name="label_pending_orders">Pendientes</string>
         <!--Accessibility-->
         <string name="desc_orders_tab">Recibir, procesar y despachar pedidos de clientes</string>
         <string name="desc_inventory_tab">Gestionar inventario, añadir artículos del catálogo y configurar ofertas especiales</string>
