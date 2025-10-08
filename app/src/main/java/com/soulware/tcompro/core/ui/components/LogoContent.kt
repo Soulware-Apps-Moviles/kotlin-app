@@ -25,11 +25,11 @@ fun LogoContent(logoImage: Painter) {
             horizontalAlignment = Alignment.End
         ) {
             Text(
-                text = "T'Compro",
+                text = stringResource(R.string.app_name),
                 style = MaterialTheme.typography.titleLarge
             )
             Text(
-                text = "stores",
+                text = stringResource(R.string.app_subversion),
                 style = MaterialTheme.typography.labelSmall
             )
         }
