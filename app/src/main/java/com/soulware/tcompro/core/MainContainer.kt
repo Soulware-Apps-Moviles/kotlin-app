@@ -24,7 +24,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.soulware.tcompro.R
@@ -131,7 +130,9 @@ fun MainContainer(logoImageResId: Int) {
             startDestination = MainTabRoute.Orders.route,
             modifier = Modifier.padding(paddingValues)
         ) {
-            composable(MainTabRoute.Orders.route) { }
+            composable(MainTabRoute.Orders.route) {
+                OrdersScreen()
+            }
             composable(MainTabRoute.Inventory.route) { }
             composable(MainTabRoute.Shop.route) { }
             composable(MainTabRoute.Finances.route) { }
