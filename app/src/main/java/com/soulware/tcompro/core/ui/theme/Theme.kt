@@ -7,9 +7,6 @@ import androidx.compose.runtime.Composable
 
 import androidx.compose.ui.graphics.Color
 
-val LightGray = Color(0xFFF2F2F2)
-val MediumGray = Color(0xFF757575)
-
 val lightScheme: ColorScheme = lightColorScheme(
     primary = TComproOrange,
     onPrimary = Color.White,
@@ -18,7 +15,7 @@ val lightScheme: ColorScheme = lightColorScheme(
 
     secondary = TComproOrange,
     onSecondary = Color.White,
-    secondaryContainer = LightGray,
+    secondaryContainer = gray,
     onSecondaryContainer = TComproBlack,
 
     surface = Color.White,

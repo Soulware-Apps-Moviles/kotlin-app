@@ -15,7 +15,7 @@ fun AppNav() {
     NavHost(navController, startDestination = Route.Shop.route) {
 
         composable(Route.Shop.route) {
-            MainContainer(rootNavController = navController)
+            MainContainer(rootNavController = navController, R.drawable.app_logo)
         }
     }
 }

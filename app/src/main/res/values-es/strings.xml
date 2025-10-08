@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">TCompro</string>
+    <!--App-->
+    <string name="app_name" translatable="false">T\'Compro</string>
+    <string name="app_logo_description">Cuy de T\'Compro</string>
     <!--Tabs and navigation-->
         <!--Labels-->
         <string name="label_login">Login</string>
@@ -17,4 +19,28 @@
         <string name="desc_settings_tab">Configurar preferencias de la aplicación, notificaciones y seguridad</string>
         <!--Errors-->
         <string name="error_invalid_tab">Ruta de pestaña inválida</string>
+        <!--General-->
+        <string name="desc_go_back">Volver a la pantalla anterior</string>
+        <string name="desc_more_options">Más opciones de menú</string>
+    <!--Products-->
+        <!--Categories-->
+        <string name="category_produce">Productos Frescos</string>
+        <string name="category_dairy">Lácteos</string>
+        <string name="category_meat">Carnes</string>
+        <string name="category_beverages">Bebidas</string>
+        <string name="category_house">Artículos del Hogar</string>
+        <string name="category_grocery">Abarrotes</string>
+        <string name="category_snacks">Bocadillos</string>
+        <string name="category_pet">Suministros para Mascotas</string>
+        <string name="category_other">Otros</string>
+    <!--Orders-->
+        <!--Statuses-->
+        <string name="status_placed">Pedido Realizado</string>
+        <string name="status_accepted">Aceptado</string>
+        <string name="status_rejected">Rechazado</string>
+        <string name="status_canceled">Cancelado</string>
+        <string name="status_ready">Listo para Recoger</string>
+        <string name="status_picked_up">Recogido</string>
+        <string name="status_dispatched">Enviado</string>
+        <string name="status_delivered">Entregado</string>
 </resources>

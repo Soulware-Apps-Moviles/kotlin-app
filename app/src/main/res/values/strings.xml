@@ -1,5 +1,7 @@
 <resources>
-    <string name="app_name" translatable="false">TCompro</string>
+    <!--App-->
+    <string name="app_name" translatable="false">T\'Compro</string>
+    <string name="app_logo_description">T\'Compro\'s guinea pig</string>
     <!--Tabs and navigation-->
         <!--Labels-->
         <string name="label_login">Login</string>
@@ -16,4 +18,28 @@
         <string name="desc_settings_tab">Configure app preferences, notifications and security</string>
         <!--Errors-->
         <string name="error_invalid_tab">Invalid tab route</string>
+        <!--General-->
+        <string name="desc_go_back">Return to previous screen</string>
+        <string name="desc_more_options">More options</string>
+    <!--Products-->
+        <!--Categories-->
+        <string name="category_produce">Produce</string>
+        <string name="category_dairy">Dairy</string>
+        <string name="category_meat">Meat</string>
+        <string name="category_beverages">Beverages</string>
+        <string name="category_house">Household Items</string>
+        <string name="category_grocery">Grocery</string>
+        <string name="category_snacks">Snacks</string>
+        <string name="category_pet">Pet Supplies</string>
+        <string name="category_other">Other</string>
+    <!--Orders-->
+        <!--Statuses-->
+        <string name="status_placed">Placed</string>
+        <string name="status_accepted">Accepted</string>
+        <string name="status_rejected">Rejected</string>
+        <string name="status_canceled">Canceled</string>
+        <string name="status_ready">Ready for Pickup</string>
+        <string name="status_picked_up">Picked Up</string>
+        <string name="status_dispatched">Dispatched</string>
+        <string name="status_delivered">Delivered</string>
 </resources>
