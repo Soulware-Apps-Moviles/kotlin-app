@@ -1,4 +1,4 @@
-package com.soulware.tcompro.features.inventory
+package com.soulware.tcompro.features.inventory.presentation
 
 import androidx.annotation.StringRes
 import androidx.compose.material3.Text
