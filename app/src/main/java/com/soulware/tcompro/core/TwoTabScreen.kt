@@ -11,6 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.sp
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -73,7 +74,8 @@ fun <T : ITabRoute> TwoTabScreen(
                         Text(
                             stringResource(tab.labelResId),
                             style = MaterialTheme.typography.bodyMedium,
-                            color = letterColor
+                            color = letterColor,
+                            fontSize = 12.sp
                         )
                     }
                 )

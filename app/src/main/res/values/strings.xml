@@ -15,6 +15,12 @@
             <!--Orders-->
             <string name="label_incoming_orders">Incoming</string>
             <string name="label_pending_orders">Pending</string>
+            <!--Inventory-->
+            <string name="label_inventory_products">My Inventory</string>
+            <string name="label_catalog_products">Catalog</string>
+            <!--Shop-->
+            <string name="label_trusted_customers">Trusted Customers</string>
+            <string name="label_staff">Staff</string>
         <!--Accessibility-->
         <string name="desc_orders_tab">Receive, process, and dispatch customer orders</string>
         <string name="desc_inventory_tab">Manage inventory, add catalog items, and set up special offers</string>
@@ -55,4 +61,6 @@
     <string name="placeholder_staff">Staff Management Content</string>
     <string name="placeholder_inventory">Inventory Management Content</string>
     <string name="placeholder_catalog">Product Catalog Content</string>
+    <string name="placeholder_finances">Finances Content</string>
+    <string name="placeholder_settings">Settings Content</string>
 </resources>

@@ -28,7 +28,11 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.soulware.tcompro.R
 import com.soulware.tcompro.core.ui.components.LogoContent
-import com.soulware.tcompro.features.orders.presentation.orders.OrdersScreen
+import com.soulware.tcompro.features.finances.presentation.FinancesScreen
+import com.soulware.tcompro.features.inventory.InventoryScreen
+import com.soulware.tcompro.features.orders.presentation.OrdersScreen
+import com.soulware.tcompro.features.settings.presentation.SettingsScreen
+import com.soulware.tcompro.features.shop.presentation.ShopScreen
 
 sealed class MainTabRoute(
     override val route: String,
@@ -133,10 +137,18 @@ fun MainContainer(logoImageResId: Int) {
             composable(MainTabRoute.Orders.route) {
                 OrdersScreen()
             }
-            composable(MainTabRoute.Inventory.route) { }
-            composable(MainTabRoute.Shop.route) { }
-            composable(MainTabRoute.Finances.route) { }
-            composable(MainTabRoute.Settings.route) { }
+            composable(MainTabRoute.Inventory.route) {
+                InventoryScreen()
+            }
+            composable(MainTabRoute.Shop.route) {
+                ShopScreen()
+            }
+            composable(MainTabRoute.Finances.route) {
+                FinancesScreen()
+            }
+            composable(MainTabRoute.Settings.route) {
+                SettingsScreen()
+            }
         }
     }
 }
