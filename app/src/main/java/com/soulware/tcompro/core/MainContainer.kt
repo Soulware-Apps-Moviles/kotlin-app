@@ -24,6 +24,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.navigation.NavController
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.soulware.tcompro.R
@@ -47,7 +49,7 @@ sealed class MainTabRoute(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MainContainer(logoImageResId: Int) {
+fun MainContainer(logoImageResId: Int,navController: NavController) {
     val navigationItems = listOf(
         MainTabRoute.Orders,
         MainTabRoute.Inventory,
@@ -141,7 +143,7 @@ fun MainContainer(logoImageResId: Int) {
                 InventoryScreen()
             }
             composable(MainTabRoute.Shop.route) {
-                ShopScreen()
+                ShopScreen(navController as NavHostController)
             }
             composable(MainTabRoute.Finances.route) {
                 FinancesScreen()

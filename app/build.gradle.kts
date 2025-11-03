@@ -97,4 +97,11 @@ dependencies {
     // Hilt Navigation
     implementation(libs.androidx.hilt.navigation.compose)
 
+    implementation(libs.androidx.camera.core)
+    implementation(libs.androidx.camera.camera2)
+    implementation(libs.androidx.camera.lifecycle)
+    implementation(libs.androidx.camera.view)
+
+    // ML Kit Barcode Scanner
+    implementation(libs.google.mlkit.barcode)
 }
