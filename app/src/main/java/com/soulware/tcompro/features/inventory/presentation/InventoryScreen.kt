@@ -46,7 +46,9 @@ fun InventoryProductsScreen() {
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         items(sampleInventoryProducts) { product ->
-            ProductCard(product = product)
+            ProductCard(
+                product = product
+            )
         }
     }
 }
