@@ -6,13 +6,14 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.soulware.tcompro.R
 import com.soulware.tcompro.core.ITabRoute
 import com.soulware.tcompro.core.TwoTabScreen
-import com.soulware.tcompro.features.inventory.domain.model.Product
-import com.soulware.tcompro.features.inventory.domain.model.ProductCategory
 
 sealed class InventoryInnerTabRoute(
     override val route: String,
@@ -36,18 +37,19 @@ fun InventoryScreen() {
 }
 
 @Composable
-fun InventoryProductsScreen() {
-    val sampleInventoryProducts = listOf(
-        Product("1", "Manzanas", 1.5, ProductCategory.PRODUCE, 100),
-        Product("2", "Leche", 2.0, ProductCategory.DAIRY, 50)
-    )
+fun InventoryProductsScreen(
+    viewModel: ProductViewModel = hiltViewModel()
+) {
+    val products by viewModel.products.collectAsState()
     LazyColumn(
         modifier = Modifier.padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        items(sampleInventoryProducts) { product ->
+        items(products) { product ->
             ProductCard(
-                product = product
+                product = product,
+                onAdd = { viewModel.addProduct(product) },
+                onRemove = { viewModel.removeProduct(product.id) }
             )
         }
     }
