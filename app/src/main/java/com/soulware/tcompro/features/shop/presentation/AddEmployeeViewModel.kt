@@ -11,6 +11,8 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import androidx.lifecycle.SavedStateHandle
+import com.soulware.tcompro.core.data.SessionManager // <-- NUEVO IMPORT
+import kotlinx.coroutines.flow.first // <-- NUEVO IMPORT
 enum class ValidationStatus { IDLE, LOADING, SUCCESS, ERROR }
 
 data class AddEmployeeState(
@@ -22,6 +24,7 @@ data class AddEmployeeState(
 @HiltViewModel
 class AddEmployeeViewModel @Inject constructor(
     private val repository: ShopRepository,
+    private val sessionManager: SessionManager,
     private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
@@ -36,15 +39,21 @@ class AddEmployeeViewModel @Inject constructor(
     }
 
     fun validateAndHireEmployee(code: String) {
-
-
         val authId = code
-        val shopId = "1"
 
         viewModelScope.launch {
             _uiState.value = AddEmployeeState(status = ValidationStatus.LOADING)
 
-            val employee = repository.hireShopkeeper(shopId, authId)
+            // --- ¡DEJAMOS DE SIMULAR! ---
+            val shopId = sessionManager.userSessionFlow.first().shopId
+            if (shopId == null) {
+                _uiState.value = AddEmployeeState(status = ValidationStatus.ERROR, errorMessage = "Session error, no Shop ID found.")
+                return@launch
+            }
+
+            // 2. Usamos el shopId real
+            val employee = repository.hireShopkeeper(shopId = shopId.toString(), authId = authId)
+            // ---------------------------
 
             if (employee != null) {
                 _uiState.value = AddEmployeeState(
