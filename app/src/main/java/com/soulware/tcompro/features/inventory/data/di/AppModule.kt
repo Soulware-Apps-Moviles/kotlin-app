@@ -1,4 +1,4 @@
-package com.soulware.tcompro.di
+package com.soulware.tcompro.features.inventory.data.di
 
 import com.soulware.tcompro.features.inventory.data.remote.ProductApi
 import com.soulware.tcompro.features.inventory.data.repository.ProductRepositoryImpl
@@ -19,7 +19,7 @@ object AppModule {
     @Singleton
     fun provideProductApi(): ProductApi {
         return Retrofit.Builder()
-            .baseUrl("https://your.api.url/") // TODO: Replace with your actual API URL
+            .baseUrl("http://20.201.98.91:8080/") // TODO: Replace with your actual API URL
             .addConverterFactory(GsonConverterFactory.create())
             .build()
             .create(ProductApi::class.java)
