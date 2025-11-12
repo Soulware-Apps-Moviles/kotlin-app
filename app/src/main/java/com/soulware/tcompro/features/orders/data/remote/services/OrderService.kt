@@ -1,6 +1,6 @@
 package com.soulware.tcompro.features.orders.data.remote.services
 
-import com.soulware.tcompro.features.orders.domain.models.Order
+import com.soulware.tcompro.features.orders.data.remote.models.OrderWrapperDto
 import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.Path
@@ -8,7 +8,7 @@ import retrofit2.http.Query
 
 interface OrderService {
     @GET("orders/v1")
-    suspend fun getOrders(@Query("status") status: String? = null): List<Order>
+    suspend fun getOrders(@Query("status") status: String? = null): OrderWrapperDto
 
     @POST("orders/v1/{id}/accept")
     suspend fun acceptOrder(@Path("id") orderId: Int)
