@@ -8,6 +8,8 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -25,6 +27,16 @@ fun PendingOrdersScreen(
     viewModel: PendingOrdersViewModel = hiltViewModel(),
     onOrderClick: (Order) -> Unit = {}
 ) {
+    LaunchedEffect(Unit) {
+        viewModel.startAutoRefresh()
+    }
+
+    DisposableEffect(Unit) {
+        onDispose {
+            viewModel.stopAutoRefresh()
+        }
+    }
+
     val orders by viewModel.orders.collectAsState()
     val isLoading by viewModel.isLoading.collectAsState()
     val errorMessage by viewModel.errorMessage.collectAsState()

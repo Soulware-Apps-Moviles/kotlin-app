@@ -19,6 +19,9 @@ class OrderDetailViewModel @Inject constructor(
     private val _order = MutableStateFlow<Order?>(null)
     val order: StateFlow<Order?> = _order.asStateFlow()
 
+    private val _actionCompleted = MutableStateFlow(false)
+    val actionCompleted: StateFlow<Boolean> = _actionCompleted
+
     private val _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
 
@@ -44,6 +47,7 @@ class OrderDetailViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 repository.cancelOrder(orderId)
+                _actionCompleted.value = true
             } catch (e: Exception) {
                 _errorMessage.value = "Failed to cancel order"
             }
@@ -54,6 +58,7 @@ class OrderDetailViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 repository.advanceOrder(orderId)
+                _actionCompleted.value = true
             } catch (e: Exception) {
                 _errorMessage.value = "Failed to update order status"
             }

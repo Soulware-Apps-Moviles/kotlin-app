@@ -5,6 +5,8 @@ import androidx.lifecycle.viewModelScope
 import com.soulware.tcompro.features.orders.domain.models.Order
 import com.soulware.tcompro.features.orders.domain.repository.OrderRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -25,13 +27,35 @@ class PendingOrdersViewModel @Inject constructor(
     private val _errorMessage = MutableStateFlow<String?>(null)
     val errorMessage: StateFlow<String?> = _errorMessage.asStateFlow()
 
+    private var autoRefreshJob: Job? = null
+
     init {
-        getPendingOrders()
+        startAutoRefresh()
     }
 
-    fun getPendingOrders() {
+    fun startAutoRefresh() {
+        if (autoRefreshJob?.isActive == true) return
+
+        autoRefreshJob = viewModelScope.launch {
+            while (true) {
+                try {
+                    getPendingOrders(silent = true)
+                } catch (e: Exception) {
+                    _errorMessage.value = e.message ?: "Error refreshing pending orders"
+                }
+                delay(5000)
+            }
+        }
+    }
+
+    fun stopAutoRefresh() {
+        autoRefreshJob?.cancel()
+        autoRefreshJob = null
+    }
+
+    fun getPendingOrders(silent: Boolean = false) {
         viewModelScope.launch {
-            _isLoading.value = true
+            if (!silent) _isLoading.value = true
             _errorMessage.value = null
 
             try {
@@ -40,7 +64,7 @@ class PendingOrdersViewModel @Inject constructor(
             } catch (e: Exception) {
                 _errorMessage.value = e.message ?: "Unexpected error"
             } finally {
-                _isLoading.value = false
+                if (!silent) _isLoading.value = false
             }
         }
     }

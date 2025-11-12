@@ -12,7 +12,7 @@ class OrdersRepositoryImpl @Inject constructor(
 ) : OrderRepository {
 
     override suspend fun getIncomingOrders(): List<Order> = withContext(Dispatchers.IO) {
-        service.getOrders(status = "PENDING")
+        service.getOrders(status = "PLACED")
     }
 
     override suspend fun getPendingOrders(): List<Order> = withContext(Dispatchers.IO) {

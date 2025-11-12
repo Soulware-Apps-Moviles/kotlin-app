@@ -24,11 +24,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.soulware.tcompro.R
 import com.soulware.tcompro.core.ui.components.LogoContent
-import com.soulware.tcompro.features.orders.presentation.orders.OrdersScreen
+import com.soulware.tcompro.features.orders.presentation.OrdersNavGraph
 
 sealed class MainTabRoute(
     override val route: String,
@@ -43,7 +44,7 @@ sealed class MainTabRoute(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MainContainer(logoImageResId: Int) {
+fun MainContainer(logoImageResId: Int, rootNavController: NavHostController) {
     val navigationItems = listOf(
         MainTabRoute.Orders,
         MainTabRoute.Inventory,
@@ -131,7 +132,11 @@ fun MainContainer(logoImageResId: Int) {
             modifier = Modifier.padding(paddingValues)
         ) {
             composable(MainTabRoute.Orders.route) {
-                OrdersScreen()
+                val ordersNavController = rememberNavController()
+                OrdersNavGraph(
+                    navController = ordersNavController,
+                    rootNavController = rootNavController // 🔥 este es el global
+                )
             }
             composable(MainTabRoute.Inventory.route) { }
             composable(MainTabRoute.Shop.route) { }

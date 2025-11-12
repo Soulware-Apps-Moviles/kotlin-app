@@ -33,7 +33,7 @@ fun PendingOrderCard(
             .clickable { onCardClick() },
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp, pressedElevation = 6.dp)
     ) {
         Column(
             modifier = Modifier
@@ -48,7 +48,7 @@ fun PendingOrderCard(
                     imageVector = Icons.Default.Person,
                     contentDescription = "Customer photo",
                     modifier = Modifier
-                        .size(48.dp)
+                        .size(52.dp)
                         .clip(CircleShape),
                     contentScale = ContentScale.Crop
                 )
@@ -56,19 +56,27 @@ fun PendingOrderCard(
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
                         text = "Order #${order.id}",
-                        color = MaterialTheme.colorScheme.primary,
-                        fontSize = 12.sp
+                        style = MaterialTheme.typography.labelSmall.copy(
+                            color = MaterialTheme.colorScheme.primary,
+                            fontWeight = FontWeight.Medium,
+                            fontSize = 15.sp
+                        )
                     )
                     Text(
                         text = "John Doe",
-                        style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold)
+                        style = MaterialTheme.typography.bodyLarge.copy(
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 25.sp
+                        )
                     )
                 }
                 Text(
                     text = "S/${order.orderLines.sumOf { it.price.toDouble() * it.quantity }}",
-                    color = MaterialTheme.colorScheme.primary,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 14.sp
+                    style = MaterialTheme.typography.bodyMedium.copy(
+                        color = MaterialTheme.colorScheme.primary,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 17.sp
+                    )
                 )
             }
             Spacer(modifier = Modifier.height(12.dp))
@@ -80,12 +88,16 @@ fun PendingOrderCard(
                 Spacer(modifier = Modifier.weight(1f))
                 TextButton(
                     onClick = onDispatchClick,
-                    contentPadding = PaddingValues(horizontal = 4.dp, vertical = 0.dp)
+                    contentPadding = PaddingValues(horizontal = 4.dp, vertical = 0.dp),
+                    modifier = Modifier.padding(horizontal = 5.dp)
                 ) {
                     Text(
                         text = "Dispatch",
-                        color = MaterialTheme.colorScheme.onSurface,
-                        style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium)
+                        style = MaterialTheme.typography.bodyMedium.copy(
+                            fontWeight = FontWeight.Medium,
+                            color = MaterialTheme.colorScheme.onSurface,
+                            fontSize = 17.sp
+                        )
                     )
                     Icon(
                         imageVector = Icons.Default.KeyboardArrowRight,

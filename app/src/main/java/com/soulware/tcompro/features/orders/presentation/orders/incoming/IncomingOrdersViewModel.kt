@@ -2,9 +2,12 @@ package com.soulware.tcompro.features.orders.presentation.orders.incoming
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.soulware.tcompro.features.orders.domain.models.Order
 import com.soulware.tcompro.features.orders.domain.repository.OrderRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -25,13 +28,36 @@ class IncomingOrdersViewModel @Inject constructor(
     private val _errorMessage = MutableStateFlow<String?>(null)
     val errorMessage: StateFlow<String?> = _errorMessage.asStateFlow()
 
+    private var autoRefreshJob: Job? = null
+
     init {
-        getIncomingOrders()
+        startAutoRefresh()
     }
 
-    fun getIncomingOrders() {
+    fun startAutoRefresh() {
+        if (autoRefreshJob?.isActive == true) return
+
+        autoRefreshJob = viewModelScope.launch {
+            while (true) {
+                try {
+                    getIncomingOrders(silent = true)
+                } catch (e: Exception) {
+                    _errorMessage.value = e.message ?: "Error refreshing orders"
+                }
+                delay(5000)
+            }
+        }
+    }
+
+    fun stopAutoRefresh() {
+        autoRefreshJob?.cancel()
+        autoRefreshJob = null
+    }
+
+
+    fun getIncomingOrders(silent: Boolean = false) {
         viewModelScope.launch {
-            _isLoading.value = true
+            if (!silent) _isLoading.value = true
             _errorMessage.value = null
 
             try {
@@ -40,7 +66,7 @@ class IncomingOrdersViewModel @Inject constructor(
             } catch (e: Exception) {
                 _errorMessage.value = e.message ?: "Unexpected error"
             } finally {
-                _isLoading.value = false
+                if (!silent) _isLoading.value = false
             }
         }
     }
