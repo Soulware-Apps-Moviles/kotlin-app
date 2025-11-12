@@ -1,4 +1,4 @@
-package com.soulware.tcompro.features.inventory.data.repository
+package com.soulware.tcompro.features.inventory.data.di
 
 import com.soulware.tcompro.features.inventory.data.remote.ProductApi
 import com.soulware.tcompro.features.inventory.domain.model.Product
