@@ -15,7 +15,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 fun CatalogScreen(
     viewModel: ProductViewModel = hiltViewModel()
 ) {
-    val products by viewModel.products.collectAsState()
+    val products by viewModel.products.collectAsState(initial = emptyList())
     LazyColumn(
         modifier = Modifier.padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
