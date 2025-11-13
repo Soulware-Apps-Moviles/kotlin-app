@@ -5,7 +5,7 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Update
-import com.google.android.engage.food.datamodel.ProductEntity
+import com.soulware.tcompro.features.inventory.data.local.model.ProductEntity
 
 @Dao
 interface ProductDao {

@@ -14,7 +14,7 @@ interface ProductApi {
     suspend fun getProducts(): List<Product>
 
     @POST("inventory")
-    suspend fun addProductToInventory(@Body product: Product)
+    suspend fun addProductToInventory(@Body product: ProductDto)
 
     @DELETE("inventory/{productId}")
     suspend fun removeProductFromInventory(@Path("productId") productId: String)

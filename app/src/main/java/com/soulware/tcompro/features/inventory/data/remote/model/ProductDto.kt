@@ -7,5 +7,6 @@ data class ProductDto(
     val name: String,
     val price: Double,
     val category: ProductCategory,
-    val stock: Int
+    val stock: Int,
+    val imageUrl: String?
 )

@@ -1,7 +1,7 @@
 package com.soulware.tcompro.features.inventory.data.di
 
 import com.soulware.tcompro.features.inventory.data.remote.service.ProductApi
-import com.soulware.tcompro.features.inventory.data.di.ProductRepositoryImpl
+import com.soulware.tcompro.features.inventory.data.repository.ProductRepositoryImpl
 import com.soulware.tcompro.features.inventory.domain.repository.ProductRepository
 import dagger.Module
 import dagger.Provides
