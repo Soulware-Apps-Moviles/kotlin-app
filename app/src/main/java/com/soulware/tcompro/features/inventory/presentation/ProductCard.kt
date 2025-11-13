@@ -1,5 +1,6 @@
 package com.soulware.tcompro.features.inventory.presentation
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -16,7 +17,7 @@ fun ProductCard(
     onRemove: () -> Unit
 ) {
     Card(modifier = Modifier.fillMaxWidth()) {
-        Row(modifier = Modifier.padding(16.dp)) {
+        Row(modifier = Modifier.padding(16.dp).background(MaterialTheme.colorScheme.surface)) {
 
             AsyncImage(
                 model = product.imageUrl,
