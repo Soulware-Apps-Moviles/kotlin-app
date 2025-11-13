@@ -1,5 +1,6 @@
-package com.soulware.tcompro.features.inventory.data.remote
+package com.soulware.tcompro.features.inventory.data.remote.service
 
+import com.soulware.tcompro.features.inventory.data.remote.model.ProductDto
 import com.soulware.tcompro.features.inventory.domain.model.Product
 import retrofit2.http.Body
 import retrofit2.http.DELETE

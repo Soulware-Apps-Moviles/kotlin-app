@@ -1,4 +1,4 @@
-package com.soulware.tcompro.features.inventory.data.remote
+package com.soulware.tcompro.features.inventory.data.remote.model
 
 import com.soulware.tcompro.features.inventory.domain.model.ProductCategory
 
