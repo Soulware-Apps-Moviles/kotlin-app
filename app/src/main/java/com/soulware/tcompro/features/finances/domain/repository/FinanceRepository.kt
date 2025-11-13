@@ -10,4 +10,6 @@ interface FinanceRepository {
     suspend fun getDebts(shopId: Int, status: String): List<Debt>
 
     suspend fun markDebtAsPaid(debtId: Int)
+
+    suspend fun payDebt(debt: Debt): Payment
 }

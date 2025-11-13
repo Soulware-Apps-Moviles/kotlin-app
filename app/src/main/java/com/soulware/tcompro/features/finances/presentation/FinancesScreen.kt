@@ -25,6 +25,7 @@ fun FinancesScreen(
     val payments by viewModel.payments.collectAsState()
     val debts by viewModel.debts.collectAsState()
     val isLoading by viewModel.isLoading.collectAsState()
+    val totalRevenue by viewModel.totalRevenue.collectAsState()
     val errorMessage by viewModel.errorMessage.collectAsState()
 
     LaunchedEffect(Unit) {
@@ -43,6 +44,7 @@ fun FinancesScreen(
         else -> FinancesContent(
             payments = payments,
             debts = debts,
+            totalRevenue = totalRevenue,
             onMarkPaid = viewModel::markDebtAsPaid
         )
     }
@@ -52,6 +54,7 @@ fun FinancesScreen(
 private fun FinancesContent(
     payments: List<Payment>,
     debts: List<Debt>,
+    totalRevenue: Double,
     onMarkPaid: (Int) -> Unit
 ) {
     Column(
@@ -60,6 +63,7 @@ private fun FinancesContent(
             .background(MaterialTheme.colorScheme.surface)
             .padding(horizontal = 20.dp, vertical = 16.dp)
     ) {
+        // Header
         Row(
             Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
@@ -83,7 +87,7 @@ private fun FinancesContent(
         Spacer(modifier = Modifier.height(24.dp))
 
         // TOTAL REVENUE
-        TotalRevenueCard(payments)
+        TotalRevenueCard(totalRevenue)
 
         Spacer(modifier = Modifier.height(30.dp))
 
@@ -96,19 +100,19 @@ private fun FinancesContent(
             verticalArrangement = Arrangement.spacedBy(12.dp),
             modifier = Modifier
                 .fillMaxWidth()
-                .heightIn(max = 240.dp)
+                .weight(1f)
         ) {
             items(debts.filter { it.status == "PENDING" }) { debt ->
                 CreditorItem(
                     name = "Customer ${debt.customerId}",
-                    amount = "S/${debt.amount}",
+                    amount = "S/${"%.2f".format(debt.amount)}",
                     status = debt.status,
                     onMarkPaid = { onMarkPaid(debt.id) }
                 )
             }
         }
 
-        Spacer(modifier = Modifier.height(30.dp))
+        Spacer(modifier = Modifier.height(20.dp))
 
         // TRANSACTION HISTORY
         SectionTitle("Transaction History")
@@ -117,14 +121,16 @@ private fun FinancesContent(
 
         LazyColumn(
             verticalArrangement = Arrangement.spacedBy(10.dp),
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier
+                .fillMaxWidth()
+                .weight(1f)
         ) {
             items(payments) { payment ->
                 TransactionItem(
                     title = "Payment #${payment.id}",
                     date = "Order: ${payment.orderId}",
-                    amount = "+S/${payment.amount}",
-                    color = MaterialTheme.colorScheme.primary
+                    amount = "+S/${"%.2f".format(payment.amount)}",
+                    color = Color(0xFF2E7D32) // green
                 )
             }
         }
@@ -132,22 +138,17 @@ private fun FinancesContent(
 }
 
 @Composable
-private fun TotalRevenueCard(payments: List<Payment>) {
-    val total = payments.sumOf { it.amount }
-
+private fun TotalRevenueCard(totalRevenue: Double) {
     Surface(
         color = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
         shape = RoundedCornerShape(16.dp),
         modifier = Modifier.fillMaxWidth()
     ) {
         Column(Modifier.padding(16.dp)) {
+            Text("Total Revenue", color = MaterialTheme.colorScheme.primary, fontSize = 16.sp)
+
             Text(
-                "Total Revenue",
-                color = MaterialTheme.colorScheme.primary,
-                fontSize = 16.sp
-            )
-            Text(
-                "S/ ${"%.2f".format(total)}",
+                "S/ ${"%.2f".format(totalRevenue)}",
                 color = MaterialTheme.colorScheme.onSurface,
                 fontSize = 26.sp
             )
@@ -173,6 +174,12 @@ fun CreditorItem(
                 status,
                 style = MaterialTheme.typography.bodyMedium.copy(
                     color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            )
+            Text(
+                amount,
+                style = MaterialTheme.typography.bodyLarge.copy(
+                    color = MaterialTheme.colorScheme.onSurface
                 )
             )
         }
@@ -214,7 +221,8 @@ fun TransactionItem(
 
         Text(
             text = amount,
-            color = color
+            color = color,
+            fontSize = 18.sp
         )
     }
 }

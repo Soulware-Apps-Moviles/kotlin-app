@@ -45,8 +45,7 @@ class FinancesViewModel @Inject constructor(
                 _errorMessage.value = null
 
                 val paymentsList = repository.getPayments(shopId)
-
-                val debtsList = repository.getDebts(shopId, status = "PAID")
+                val debtsList = repository.getDebts(shopId, status = "PENDING")
 
                 _payments.value = paymentsList
                 _debts.value = debtsList
@@ -54,7 +53,7 @@ class FinancesViewModel @Inject constructor(
                 _totalRevenue.value = paymentsList.sumOf { it.amount }
 
             } catch (e: Exception) {
-                _errorMessage.value = e.message ?: "Unexpected error"
+                _errorMessage.value = e.localizedMessage ?: "Unexpected error"
             } finally {
                 _isLoading.value = false
             }
@@ -64,14 +63,19 @@ class FinancesViewModel @Inject constructor(
     fun markDebtAsPaid(debtId: Int) {
         viewModelScope.launch {
             try {
-                repository.markDebtAsPaid(debtId)
+                val debt = _debts.value.firstOrNull { it.id == debtId } ?: return@launch
 
-                _debts.value = _debts.value.map { debt ->
-                    if (debt.id == debtId) debt.copy(status = "PAID") else debt
-                }
+                val newPayment = repository.payDebt(debt)
+
+                _debts.value = _debts.value.filter { it.id != debtId }
+                _payments.value = _payments.value + newPayment
+
+                _totalRevenue.value = _payments.value.sumOf { it.amount }
+
             } catch (e: Exception) {
-                _errorMessage.value = "Failed to mark as paid"
+                _errorMessage.value = e.localizedMessage ?: "Failed to mark as paid"
             }
         }
     }
 }
+
