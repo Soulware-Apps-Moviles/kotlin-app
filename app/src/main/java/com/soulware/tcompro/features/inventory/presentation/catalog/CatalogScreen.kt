@@ -1,6 +1,5 @@
-package com.soulware.tcompro.features.inventory.presentation
+package com.soulware.tcompro.features.inventory.presentation.catalog
 
-import androidx.annotation.StringRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -26,6 +25,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -33,33 +33,12 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.soulware.tcompro.R
-import com.soulware.tcompro.core.ITabRoute
-import com.soulware.tcompro.core.TwoTabScreen
-import com.soulware.tcompro.features.inventory.presentation.catalog.CatalogScreen
-
-sealed class InventoryInnerTabRoute(
-    override val route: String,
-    @get:StringRes override val labelResId: Int
-) : ITabRoute {
-    object MyInventory : InventoryInnerTabRoute("inventory_products_tab", R.string.label_inventory_products)
-    object Catalog : InventoryInnerTabRoute("catalog_products_tab", R.string.label_catalog_products)
-}
+import com.soulware.tcompro.features.inventory.domain.model.Product
+import com.soulware.tcompro.features.inventory.presentation.ProductCard
+import com.soulware.tcompro.features.inventory.presentation.ProductViewModel
 
 @Composable
-fun InventoryScreen() {
-    val inventoryTabs = listOf(
-        InventoryInnerTabRoute.MyInventory,
-        InventoryInnerTabRoute.Catalog
-    )
-    TwoTabScreen(
-        tabs = inventoryTabs,
-        content1 = { InventoryProductsScreen() },
-        content2 = { CatalogScreen() }
-    )
-
-}
-@Composable
-fun NoProductsOnInventoryScreen() {
+fun NoProductsInCatalogScreen() {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -69,12 +48,12 @@ fun NoProductsOnInventoryScreen() {
     ) {
         Image(
             painter = painterResource(id = R.drawable.no_orders_illustration),
-            contentDescription = "No products in inventory",
+            contentDescription = "No products in catalog",
             modifier = Modifier.size(200.dp)
         )
         Spacer(modifier = Modifier.height(24.dp))
         Text(
-            text = "No products in inventory",
+            text = "No products in catalog",
             style = MaterialTheme.typography.titleMedium.copy(
                 fontWeight = FontWeight.Medium,
                 color = MaterialTheme.colorScheme.onSurface
@@ -84,7 +63,7 @@ fun NoProductsOnInventoryScreen() {
     }
 }
 @Composable
-fun InventoryProductsScreen(
+fun CatalogScreen(
     viewModel: ProductViewModel = hiltViewModel()
 ) {
     val products by viewModel.products.collectAsState(initial = emptyList())
@@ -113,14 +92,13 @@ fun InventoryProductsScreen(
         )
 
         if (filteredProducts.isEmpty()) {
-            // Si está vacía, muestra la pantalla "sin productos"
-            NoProductsOnInventoryScreen()
+            NoProductsInCatalogScreen()
         } else {
             LazyColumn(
-                modifier = Modifier.padding(16.dp),
+                modifier = Modifier.padding(horizontal = 16.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                items(products) { product ->
+                items(filteredProducts) { product ->
                     ProductCard(
                         product = product,
                         onAdd = { viewModel.addProduct(product) },

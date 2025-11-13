@@ -21,5 +21,6 @@ data class Product(
     val price: Double,
     val category: ProductCategory,
     val stock: Int,
+    val isAvailable: Boolean = false,
     val imageUrl: String? = null
 )

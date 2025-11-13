@@ -42,7 +42,7 @@ fun ProductCard(
             AsyncImage(
                 model = product.imageUrl,
                 contentDescription = product.name,
-                modifier = Modifier.size(64.dp),
+                modifier = Modifier.size(32.dp),
                 contentScale = ContentScale.Crop
             )
             Spacer(modifier = Modifier.width(16.dp))
