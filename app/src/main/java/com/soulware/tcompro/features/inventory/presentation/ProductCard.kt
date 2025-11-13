@@ -12,8 +12,13 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
@@ -24,8 +29,11 @@ import com.soulware.tcompro.features.inventory.domain.model.Product
 fun ProductCard(
     product: Product,
     onAdd: (() -> Unit)? = null,
-    onRemove: (() -> Unit)? = null
+    onRemove: (() -> Unit)? = null,
+    onUpdatePrice: ((Double) -> Unit)? = null
 ) {
+    var newPrice by remember { mutableStateOf(product.price.toString()) }
+
     Card(modifier = Modifier.fillMaxWidth()) {
         Row(modifier = Modifier.padding(0.dp).background(MaterialTheme.colorScheme.surface)) {
 
@@ -55,6 +63,14 @@ fun ProductCard(
                 onRemove?.let {
                     Spacer(modifier = Modifier.height(8.dp))
                     Button(onClick = it) { Text("Remove") }
+                }
+                onUpdatePrice?.let {
+                    OutlinedTextField(
+                        value = newPrice,
+                        onValueChange = { newPrice = it },
+                        label = { Text("New Price") }
+                    )
+                    Button(onClick = { it(newPrice.toDouble()) }) { Text("Update") }
                 }
             }
         }

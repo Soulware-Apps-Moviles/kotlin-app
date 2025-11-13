@@ -11,4 +11,6 @@ interface ProductRepository {
     suspend fun addProductToInventory(shopId: Int, product: Product)
 
     suspend fun removeProductFromInventory(shopId: Int, productId: Int)
+
+    suspend fun updateProductPrice(shopId: Int, productId: Int, newPrice: Double)
 }

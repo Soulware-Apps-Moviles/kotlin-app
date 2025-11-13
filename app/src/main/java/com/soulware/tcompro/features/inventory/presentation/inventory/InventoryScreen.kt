@@ -114,7 +114,8 @@ fun InventoryProductsScreen(
                 items(products) { product ->
                     ProductCard(
                         product = product,
-                        onRemove = { viewModel.removeProductFromInventory(product.id) }
+                        onRemove = { viewModel.removeProductFromInventory(product.id) },
+                        onUpdatePrice = { newPrice -> viewModel.updateProductPrice(product.id, newPrice) }
                     )
                 }
             }

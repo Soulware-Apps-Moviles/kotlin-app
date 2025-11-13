@@ -50,4 +50,11 @@ class InventoryViewModel @Inject constructor(
             getInventoryProducts()
         }
     }
+
+    fun updateProductPrice(productId: Int, newPrice: Double) {
+        viewModelScope.launch {
+            repository.updateProductPrice(shopId, productId, newPrice)
+            getInventoryProducts()
+        }
+    }
 }

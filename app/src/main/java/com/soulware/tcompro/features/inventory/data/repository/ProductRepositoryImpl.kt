@@ -34,6 +34,20 @@ class ProductRepositoryImpl(
         )
         api.updateProduct(dto)
     }
+
+    override suspend fun updateProductPrice(shopId: Int, productId: Int, newPrice: Double) {
+        val dto = ProductDto(
+            id = productId,
+            shopId = shopId,
+            price = newPrice,
+            catalogProductId = 0, // Not used but required
+            name = "",
+            description = null,
+            isAvailable = false,
+            imageUrl = null
+        )
+        api.updateProduct(dto)
+    }
 }
 
 // =====================
