@@ -21,12 +21,12 @@ import retrofit2.http.Query
 
 interface ProfileApiService {
 
-    @POST("api/v1/profiles")
+    @POST("profiles/v1")
     suspend fun createProfile(@Body request: CreateProfileRequest): Any
 
     @GET("owners/v1/")
     suspend fun getOwnerByEmail(
-        @Header("Authorization") authorization: String,
+        @Header("Authorization") token: String,
         @Query("email") email: String
     ): OwnerResource
 }

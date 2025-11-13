@@ -23,17 +23,14 @@ import java.io.IOException
 import javax.inject.Inject
 import javax.inject.Singleton
 
-// 1. Define el nombre del "llavero" de preferencias
 private val Context.preferencesDataStore: DataStore<Preferences> by preferencesDataStore(name = "tcompro_preferences")
 
-// 2. Define la estructura de datos de las preferencias
 data class AppSettings(
     val notificationsEnabled: Boolean,
     val appTheme: String,
     val language: String
 )
 
-// Constantes para los temas
 object AppTheme {
     const val LIGHT = "light"
     const val DARK = "dark"
@@ -44,14 +41,12 @@ object AppTheme {
 class PreferencesManager @Inject constructor(
     @ApplicationContext private val context: Context
 ) {
-    // 3. Define las "llaves"
     private object PreferencesKeys {
         val NOTIFICATIONS_ENABLED = booleanPreferencesKey("notifications_enabled")
         val APP_THEME = stringPreferencesKey("app_theme")
         val APP_LANGUAGE = stringPreferencesKey("app_language")
     }
 
-    // 4. Crea un "Flow" para que la UI observe los cambios
     val appSettingsFlow: Flow<AppSettings> = context.preferencesDataStore.data
         .catch { exception ->
             if (exception is IOException) {
@@ -69,7 +64,6 @@ class PreferencesManager @Inject constructor(
             AppSettings(notifications, theme, language)
         }
 
-    // 6. Funciones para guardar cada preferencia
 
     suspend fun setNotificationsEnabled(enabled: Boolean) {
         context.preferencesDataStore.edit { preferences ->

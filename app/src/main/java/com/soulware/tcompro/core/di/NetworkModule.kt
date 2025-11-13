@@ -51,6 +51,9 @@ annotation class SupabaseInterceptor
 @Retention(AnnotationRetention.BINARY)
 annotation class TcomproInterceptor
 
+@Qualifier
+@Retention(AnnotationRetention.BINARY)
+annotation class TcomproApiLogin
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -122,6 +125,13 @@ object NetworkModule {
             .addConverterFactory(GsonConverterFactory.create(gson))
             .build()
     }
+    @Provides
+    @Singleton
+    @TcomproApiLogin
+    fun provideTcomproLoginOkHttpClient(): OkHttpClient {
+        return OkHttpClient.Builder()
+            .build()
+    }
 
     @Provides
     @Singleton
@@ -142,7 +152,19 @@ object NetworkModule {
     fun provideShopApiService(@TcomproApi retrofit: Retrofit): ShopApiService {
         return retrofit.create(ShopApiService::class.java)
     }
-
+    @Provides
+    @Singleton
+    @TcomproApiLogin
+    fun provideTcomproLoginRetrofit(
+        gson: Gson,
+        @TcomproApiLogin okHttpClient: OkHttpClient
+    ): Retrofit {
+        return Retrofit.Builder()
+            .baseUrl(TCOMPRO_BASE_URL)
+            .client(okHttpClient)
+            .addConverterFactory(GsonConverterFactory.create(gson))
+            .build()
+    }
     @Provides
     @Singleton
     fun provideAuthApiService(@SupabaseApi retrofit: Retrofit): AuthApiService {
@@ -151,7 +173,10 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideProfileApiService(@TcomproApi retrofit: Retrofit): ProfileApiService {
+    fun provideProfileApiService(
+        @TcomproApiLogin retrofit: Retrofit
+    ): ProfileApiService {
         return retrofit.create(ProfileApiService::class.java)
     }
+
 }
