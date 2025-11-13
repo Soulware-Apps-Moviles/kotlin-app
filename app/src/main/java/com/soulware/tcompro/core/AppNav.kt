@@ -22,7 +22,7 @@ fun AppNav() {
 
     NavHost(
         navController = navController,
-        startDestination = RootRoute.Login.route
+        startDestination = RootRoute.Main.route
     ) {
 
         // LOGIN
