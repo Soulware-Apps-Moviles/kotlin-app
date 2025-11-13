@@ -6,7 +6,7 @@ plugins {
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.ksp)// KSP
     alias(libs.plugins.hilt)// Hilt
-    id("com.android.application")
+    //id("com.android.application")
     id("com.google.gms.google-services")
 }
 
