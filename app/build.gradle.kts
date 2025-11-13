@@ -62,6 +62,7 @@ dependencies {
     implementation(libs.androidx.datastore.preferences)
     implementation(libs.androidx.compose.foundation.layout)
     implementation(libs.androidx.compose.foundation)
+    implementation(libs.engage.core)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -99,6 +100,9 @@ dependencies {
 
     // Hilt Navigation
     implementation(libs.androidx.hilt.navigation.compose)
+    
+    // Coroutines
+    implementation(libs.kotlinx.coroutines.android)
 
     implementation(libs.androidx.camera.core)
     implementation(libs.androidx.camera.camera2)
