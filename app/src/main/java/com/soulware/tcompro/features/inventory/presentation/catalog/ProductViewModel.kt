@@ -1,11 +1,12 @@
-package com.soulware.tcompro.features.inventory.presentation
+package com.soulware.tcompro.features.inventory.presentation.catalog
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.soulware.tcompro.features.inventory.domain.model.Product
 import com.soulware.tcompro.features.inventory.domain.repository.ProductRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -30,16 +31,16 @@ class ProductViewModel @Inject constructor(
         }
     }
 
-    init { getProducts() }
+    init { getCatalogProducts() }
 
     fun onSearchQueryChange(q: String) {
         _searchQuery.value = q
     }
 
-    fun getProducts() {
+    fun getCatalogProducts() {
         viewModelScope.launch {
             try {
-                _allProducts.value = repository.getProducts(shopId)
+                _allProducts.value = repository.getCatalogProducts()
             } catch (e: Exception) {
                 _errorMessage.value = e.message
             }
@@ -49,14 +50,12 @@ class ProductViewModel @Inject constructor(
     fun addProduct(product: Product) {
         viewModelScope.launch {
             repository.addProductToInventory(shopId, product)
-            getProducts()
         }
     }
 
     fun removeProduct(id: Int) {
         viewModelScope.launch {
             repository.removeProductFromInventory(shopId, id)
-            getProducts()
         }
     }
 }

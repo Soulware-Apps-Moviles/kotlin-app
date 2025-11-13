@@ -9,7 +9,11 @@ class ProductRepositoryImpl(
     private val api: ProductApi
 ) : ProductRepository {
 
-    override suspend fun getProducts(shopId: Int): List<Product> {
+    override suspend fun getCatalogProducts(): List<Product> {
+        return api.getProducts().map { it.toDomain() }
+    }
+
+    override suspend fun getInventoryProducts(shopId: Int): List<Product> {
         return api.getProductsByShop(shopId).map { it.toDomain() }
     }
 

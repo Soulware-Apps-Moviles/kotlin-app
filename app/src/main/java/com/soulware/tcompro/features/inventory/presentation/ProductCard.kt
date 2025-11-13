@@ -1,8 +1,18 @@
 package com.soulware.tcompro.features.inventory.presentation
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
-import androidx.compose.material3.*
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.material3.Button
+import androidx.compose.material3.Card
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
@@ -13,11 +23,11 @@ import com.soulware.tcompro.features.inventory.domain.model.Product
 @Composable
 fun ProductCard(
     product: Product,
-    onAdd: () -> Unit,
-    onRemove: () -> Unit
+    onAdd: (() -> Unit)? = null,
+    onRemove: (() -> Unit)? = null
 ) {
     Card(modifier = Modifier.fillMaxWidth()) {
-        Row(modifier = Modifier.padding(16.dp).background(MaterialTheme.colorScheme.surface)) {
+        Row(modifier = Modifier.padding(0.dp).background(MaterialTheme.colorScheme.surface)) {
 
             AsyncImage(
                 model = product.imageUrl,
@@ -39,9 +49,13 @@ fun ProductCard(
             Spacer(modifier = Modifier.width(16.dp))
 
             Column {
-                Button(onClick = onAdd) { Text("Add") }
-                Spacer(modifier = Modifier.height(8.dp))
-                Button(onClick = onRemove) { Text("Remove") }
+                onAdd?.let {
+                    Button(onClick = it) { Text("Add") }
+                }
+                onRemove?.let {
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Button(onClick = it) { Text("Remove") }
+                }
             }
         }
     }

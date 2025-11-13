@@ -20,7 +20,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.soulware.tcompro.R
 import com.soulware.tcompro.features.inventory.presentation.ProductCard
-import com.soulware.tcompro.features.inventory.presentation.ProductViewModel
+import com.soulware.tcompro.features.inventory.presentation.catalog.ProductViewModel
 
 @Composable
 fun NoProductsInCatalogScreen() {
@@ -55,7 +55,6 @@ fun CatalogScreen(
     val products by viewModel.products.collectAsState(initial = emptyList())
     var searchQuery by remember { mutableStateOf("") }
 
-    // ==== NUEVO FILTRO SIN CATEGORY ====
     val filteredProducts = products.filter { product ->
         product.name.contains(searchQuery, ignoreCase = true) ||
                 (product.description?.contains(searchQuery, ignoreCase = true) == true)
@@ -88,8 +87,7 @@ fun CatalogScreen(
                 items(filteredProducts) { product ->
                     ProductCard(
                         product = product,
-                        onAdd = { viewModel.addProduct(product) },
-                        onRemove = { viewModel.removeProduct(product.id) }
+                        onAdd = { viewModel.addProduct(product) }
                     )
                 }
             }

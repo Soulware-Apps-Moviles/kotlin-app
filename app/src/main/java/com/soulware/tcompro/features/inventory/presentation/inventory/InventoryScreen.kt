@@ -1,4 +1,4 @@
-package com.soulware.tcompro.features.inventory.presentation
+package com.soulware.tcompro.features.inventory.presentation.inventory
 
 import androidx.annotation.StringRes
 import androidx.compose.foundation.Image
@@ -22,7 +22,10 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.soulware.tcompro.R
 import com.soulware.tcompro.core.ITabRoute
 import com.soulware.tcompro.core.TwoTabScreen
+import com.soulware.tcompro.features.inventory.presentation.ProductCard
 import com.soulware.tcompro.features.inventory.presentation.catalog.CatalogScreen
+import com.soulware.tcompro.features.inventory.presentation.catalog.NoProductsInCatalogScreen
+import com.soulware.tcompro.features.inventory.presentation.inventory.InventoryViewModel
 
 sealed class InventoryInnerTabRoute(
     override val route: String,
@@ -73,9 +76,10 @@ fun NoProductsOnInventoryScreen() {
 
 @Composable
 fun InventoryProductsScreen(
-    viewModel: ProductViewModel = hiltViewModel()
+    viewModel: InventoryViewModel = hiltViewModel()
 ) {
-    val products by viewModel.products.collectAsState(initial = emptyList())
+    val products by viewModel.inventoryProducts.collectAsState()
+
     var searchQuery by remember { mutableStateOf("") }
 
     val filteredProducts = products.filter { product ->
@@ -100,18 +104,17 @@ fun InventoryProductsScreen(
                 .padding(16.dp)
         )
 
-        if (filteredProducts.isEmpty()) {
+        if (products.isEmpty()) {
             NoProductsOnInventoryScreen()
         } else {
             LazyColumn(
-                modifier = Modifier.padding(16.dp),
+                modifier = Modifier.padding(horizontal = 16.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                items(filteredProducts) { product ->
+                items(products) { product ->
                     ProductCard(
                         product = product,
-                        onAdd = { viewModel.addProduct(product) },
-                        onRemove = { viewModel.removeProduct(product.id) }
+                        onRemove = { viewModel.removeProductFromInventory(product.id) }
                     )
                 }
             }
