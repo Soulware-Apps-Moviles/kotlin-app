@@ -24,6 +24,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.navigation.NavController
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.soulware.tcompro.R
@@ -33,7 +35,7 @@ import com.soulware.tcompro.features.inventory.presentation.InventoryScreen
 import com.soulware.tcompro.features.orders.presentation.OrdersScreen
 import com.soulware.tcompro.features.settings.presentation.SettingsScreen
 import com.soulware.tcompro.features.shop.presentation.ShopScreen
-
+import com.soulware.tcompro.features.shop.presentation.AddTrustedCustomerScreen
 sealed class MainTabRoute(
     override val route: String,
     @get:StringRes override val labelResId: Int
@@ -47,7 +49,7 @@ sealed class MainTabRoute(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MainContainer(logoImageResId: Int) {
+fun MainContainer(logoImageResId: Int,navController: NavController) {
     val navigationItems = listOf(
         MainTabRoute.Orders,
         MainTabRoute.Inventory,
@@ -141,13 +143,13 @@ fun MainContainer(logoImageResId: Int) {
                 InventoryScreen()
             }
             composable(MainTabRoute.Shop.route) {
-                ShopScreen()
+                ShopScreen(navController as NavHostController)
             }
             composable(MainTabRoute.Finances.route) {
                 FinancesScreen()
             }
             composable(MainTabRoute.Settings.route) {
-                SettingsScreen()
+                SettingsScreen(navController = navController as NavHostController)
             }
         }
     }
