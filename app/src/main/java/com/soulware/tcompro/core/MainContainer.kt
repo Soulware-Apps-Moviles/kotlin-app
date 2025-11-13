@@ -35,7 +35,7 @@ import com.soulware.tcompro.features.inventory.presentation.InventoryScreen
 import com.soulware.tcompro.features.orders.presentation.OrdersScreen
 import com.soulware.tcompro.features.settings.presentation.SettingsScreen
 import com.soulware.tcompro.features.shop.presentation.ShopScreen
-
+import com.soulware.tcompro.features.shop.presentation.AddTrustedCustomerScreen
 sealed class MainTabRoute(
     override val route: String,
     @get:StringRes override val labelResId: Int
@@ -149,7 +149,7 @@ fun MainContainer(logoImageResId: Int,navController: NavController) {
                 FinancesScreen()
             }
             composable(MainTabRoute.Settings.route) {
-                SettingsScreen()
+                SettingsScreen(navController = navController as NavHostController)
             }
         }
     }

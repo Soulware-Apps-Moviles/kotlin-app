@@ -19,8 +19,6 @@
  * listos para ser inyectados en los Repositorios, usando la instancia de Retrofit correcta.
  */
 package com.soulware.tcompro.core.di
-
-import com.soulware.tcompro.core.data.SessionManager
 import com.soulware.tcompro.features.auth.data.AuthApiService
 import com.soulware.tcompro.features.auth.data.ProfileApiService
 import com.soulware.tcompro.features.shop.data.ShopApiService

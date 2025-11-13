@@ -26,7 +26,8 @@ import com.soulware.tcompro.features.auth.presentation.LoginScreen
 import com.soulware.tcompro.features.auth.presentation.RegisterScreen
 import com.soulware.tcompro.features.shop.presentation.AddEmployeeByCodeScreen
 import com.soulware.tcompro.features.shop.presentation.AddEmployeeByQRScreen
-
+import com.soulware.tcompro.features.shop.presentation.AddTrustedCustomerScreen
+import com.soulware.tcompro.features.settings.presentation.AboutScreen
 @Composable
 fun AppNav() {
     val navController = rememberNavController()
@@ -44,10 +45,26 @@ fun AppNav() {
         composable(RootRoute.Main.route) {
             MainContainer(R.drawable.app_logo, navController = navController)
         }
-
+        composable("about") {
+            AboutScreen(navController = navController)
+        }
 
         composable("add_employee_qr") {
             AddEmployeeByQRScreen(navController)
+        }
+        composable("add_customer_email") {
+            AddTrustedCustomerScreen(navController)
+        }
+        composable(
+            route = "add_customer_email?scannedEmail={scannedEmail}",
+            arguments = listOf(
+                navArgument("scannedEmail") {
+                    type = NavType.StringType
+                    nullable = true
+                }
+            )
+        ) {
+            AddTrustedCustomerScreen(navController)
         }
 
         composable(

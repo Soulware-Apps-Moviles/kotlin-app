@@ -30,7 +30,7 @@ fun ShopScreen(navController: NavHostController) {
 
     TwoTabScreen(
         tabs = shopTabs,
-        content1 = { Text(stringResource(R.string.placeholder_trusted_customers)) },
+        content1 = { TrustedCustomerScreen(navController = navController) },
 
 
         content2 = { StaffScreen(navController = navController) }
