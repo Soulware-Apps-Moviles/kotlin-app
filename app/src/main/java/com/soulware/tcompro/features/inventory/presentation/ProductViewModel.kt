@@ -6,6 +6,8 @@ import com.soulware.tcompro.features.inventory.domain.model.Product
 import com.soulware.tcompro.features.inventory.domain.model.ProductCategory
 import com.soulware.tcompro.features.inventory.domain.repository.ProductRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -38,6 +40,7 @@ class ProductViewModel @Inject constructor(
 
     private val _errorMessage = MutableStateFlow<String?>(null)
     val errorMessage: StateFlow<String?> = _errorMessage.asStateFlow()
+
 
     val products = combine(
         _allProducts,
