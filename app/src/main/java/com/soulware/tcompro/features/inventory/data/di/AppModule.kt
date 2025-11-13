@@ -19,7 +19,7 @@ object AppModule {
     @Singleton
     fun provideProductApi(): ProductApi {
         return Retrofit.Builder()
-            .baseUrl("http://20.201.98.91:8080/") // TODO: Replace with your actual API URL
+            .baseUrl("http://20.201.98.91:8080/")
             .addConverterFactory(GsonConverterFactory.create())
             .build()
             .create(ProductApi::class.java)
