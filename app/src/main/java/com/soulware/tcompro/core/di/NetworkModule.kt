@@ -24,6 +24,9 @@ import com.soulware.tcompro.features.auth.data.ProfileApiService
 import com.soulware.tcompro.features.shop.data.ShopApiService
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
+import com.soulware.tcompro.features.inventory.data.remote.service.ProductApi
+import com.soulware.tcompro.features.inventory.data.repository.ProductRepositoryImpl
+import com.soulware.tcompro.features.inventory.domain.repository.ProductRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -177,6 +180,18 @@ object NetworkModule {
         @TcomproApiLogin retrofit: Retrofit
     ): ProfileApiService {
         return retrofit.create(ProfileApiService::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideProductApi(@TcomproApi retrofit: Retrofit): ProductApi {
+        return retrofit.create(ProductApi::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideProductRepository(api: ProductApi): ProductRepository {
+        return ProductRepositoryImpl(api)
     }
 
 }

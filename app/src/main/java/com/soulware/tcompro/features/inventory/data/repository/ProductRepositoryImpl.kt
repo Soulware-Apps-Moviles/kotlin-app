@@ -1,30 +1,62 @@
 package com.soulware.tcompro.features.inventory.data.repository
 
-
 import com.soulware.tcompro.features.inventory.data.remote.model.ProductDto
 import com.soulware.tcompro.features.inventory.data.remote.service.ProductApi
-
 import com.soulware.tcompro.features.inventory.domain.model.Product
 import com.soulware.tcompro.features.inventory.domain.repository.ProductRepository
 
-class ProductRepositoryImpl(private val api: ProductApi) : ProductRepository {
-    override suspend fun getProducts(): List<Product> {
-        return api.getProducts()
+class ProductRepositoryImpl(
+    private val api: ProductApi
+) : ProductRepository {
+
+    override suspend fun getProducts(shopId: Int): List<Product> {
+        return api.getProductsByShop(shopId).map { it.toDomain() }
     }
 
-    override suspend fun addProductToInventory(product: Product) {
-        val productDto = ProductDto(
-            id = product.id,
-            name = product.name,
-            price = product.price,
-            category = product.category,
-            stock = product.stock,
-            imageUrl = product.imageUrl
+    override suspend fun addProductToInventory(shopId: Int, product: Product) {
+        api.createProduct(product.toDto(shopId))
+    }
+
+    override suspend fun removeProductFromInventory(shopId: Int, productId: Int) {
+        val dto = ProductDto(
+            id = productId,
+            shopId = shopId,
+            catalogProductId = 0, // Not used but required
+            name = "",
+            price = 0.0,
+            description = null,
+            isAvailable = false,
+            imageUrl = null
         )
-        api.addProductToInventory(productDto)
+        api.updateProduct(dto)
     }
+}
 
-    override suspend fun removeProductFromInventory(productId: String) {
-        api.removeProductFromInventory(productId)
-    }
+// =====================
+// MAPPERS
+// =====================
+
+fun ProductDto.toDomain(): Product {
+    return Product(
+        id = id ?: 0,
+        catalogProductId = catalogProductId,
+        name = name,
+        price = price,
+        description = description,
+        isAvailable = isAvailable,
+        imageUrl = imageUrl
+    )
+}
+
+fun Product.toDto(shopId: Int): ProductDto {
+    return ProductDto(
+        id = id,
+        shopId = shopId,
+        catalogProductId = catalogProductId,
+        name = name,
+        price = price,
+        description = description,
+        isAvailable = isAvailable,
+        imageUrl = imageUrl
+    )
 }
