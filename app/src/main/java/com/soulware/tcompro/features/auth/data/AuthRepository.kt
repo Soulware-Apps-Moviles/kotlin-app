@@ -50,8 +50,8 @@ class AuthRepository @Inject constructor(
             }
 
             sessionManager.saveAccessToken(accessToken)
-
-            val owner = profileApi.getOwnerByEmail(userEmail)
+            val authorizationHeader = "Bearer $accessToken"
+            val owner = profileApi.getOwnerByEmail(authorizationHeader, userEmail)
             val shopId = owner.shopId
 
             sessionManager.saveShopId(shopId)

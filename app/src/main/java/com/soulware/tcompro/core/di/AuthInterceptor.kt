@@ -1,21 +1,10 @@
-/*
- * AuthInterceptor (Interceptor de Autenticación)
- *
- * Esta clase es un Interceptor de OkHttp que se adjunta automáticamente
- * a las llamadas de Retrofit dirigidas a nuestro backend (TcomproApi).
- *
- * Su única función es interceptar cada llamada, leer el 'accessToken'
- * guardado en el SessionManager (nuestro "llavero") y añadirlo a la
- * cabecera "Authorization" como un "Bearer Token".
- *
- * Si no hay token guardado, deja que la llamada pase sin modificar.
- */
 package com.soulware.tcompro.core.di
 
 import com.soulware.tcompro.core.data.SessionManager
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import okhttp3.Interceptor
+import okhttp3.Request // Importado
 import okhttp3.Response
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -26,18 +15,28 @@ class AuthInterceptor @Inject constructor(
 ) : Interceptor {
 
     override fun intercept(chain: Interceptor.Chain): Response {
-        val token = runBlocking {
-            sessionManager.userSessionFlow.first().accessToken
-        }
 
-        val newRequest = if (token != null) {
-            chain.request().newBuilder()
-                .addHeader("Authorization", "Bearer $token")
-                .build()
-        } else {
-            chain.request()
-        }
+        val originalRequest: Request = chain.request()
+        val requestBuilder: Request.Builder = originalRequest.newBuilder()
 
-        return chain.proceed(newRequest)
+        // --- INICIO DE LA CORRECCIÓN 1 (Arregla Bug 2) ---
+        // Añadimos el Content-Type que faltaba (el bug de Swagger)
+        requestBuilder.addHeader("Content-Type", "application/json")
+        // --- FIN DE LA CORRECCIÓN 1 ---
+
+        // --- INICIO DE LA CORRECCIÓN 2 (Arregla Bug 1) ---
+        // Verificamos si la cabecera YA fue añadida manualmente (desde AuthRepository)
+        if (originalRequest.header("Authorization") == null) {
+            // Si no fue añadida, la leemos de la sesión
+            val token = runBlocking {
+                sessionManager.userSessionFlow.first().accessToken
+            }
+            if (token != null) {
+                requestBuilder.addHeader("Authorization", "Bearer $token")
+            }
+        }
+        // --- FIN DE LA CORRECCIÓN 2 ---
+
+        return chain.proceed(requestBuilder.build())
     }
 }
