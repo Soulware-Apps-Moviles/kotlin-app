@@ -2,6 +2,7 @@
 <resources>
     <!--App-->
     <string name="app_name" translatable="false">T\'Compro</string>
+    <string name="app_subversion">bodegas</string>
     <string name="app_logo_description">Cuy de T\'Compro</string>
     <!--Tabs and navigation-->
         <!--Labels-->
@@ -15,6 +16,12 @@
             <!--Orders-->
             <string name="label_incoming_orders">Entrantes</string>
             <string name="label_pending_orders">Pendientes</string>
+            <!--Inventory-->
+            <string name="label_inventory_products">Mi Inventario</string>
+            <string name="label_catalog_products">Catálogo</string>
+            <!--Shop-->
+            <string name="label_trusted_customers">Clientes Confiables</string>
+            <string name="label_staff">Personal</string>
         <!--Accessibility-->
         <string name="desc_orders_tab">Recibir, procesar y despachar pedidos de clientes</string>
         <string name="desc_inventory_tab">Gestionar inventario, añadir artículos del catálogo y configurar ofertas especiales</string>
@@ -47,4 +54,14 @@
         <string name="status_picked_up">Recogido</string>
         <string name="status_dispatched">Enviado</string>
         <string name="status_delivered">Entregado</string>
+
+    <!--Placeholders-->
+    <string name="placeholder_incoming_orders">Contenido de Pedidos Entrantes</string>
+    <string name="placeholder_pending_orders">Contenido de Pedidos Pendientes</string>
+    <string name="placeholder_trusted_customers">Contenido de Clientes de Confianza</string>
+    <string name="placeholder_staff">Contenido de Gestión de Personal</string>
+    <string name="placeholder_inventory">Contenido de Gestión de Inventario</string>
+    <string name="placeholder_catalog">Contenido de Catálogo de Productos</string>
+    <string name="placeholder_finances">Contenido de Finanzas</string>
+    <string name="placeholder_settings">Contenido de Ajustes</string>
 </resources>

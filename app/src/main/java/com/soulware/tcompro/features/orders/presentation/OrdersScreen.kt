@@ -1,4 +1,4 @@
-package com.soulware.tcompro.features.orders.presentation.orders
+package com.soulware.tcompro.features.orders.presentation
 
 import androidx.annotation.StringRes
 import com.soulware.tcompro.R
