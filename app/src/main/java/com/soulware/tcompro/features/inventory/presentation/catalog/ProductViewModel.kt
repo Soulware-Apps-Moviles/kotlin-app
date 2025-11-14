@@ -37,7 +37,10 @@ class ProductViewModel @Inject constructor(
         }
     }
 
-    init { getCatalogProducts() }
+    init {
+        getCatalogProducts()
+        getInventoryProducts()
+    }
 
     fun onSearchQueryChange(q: String) {
         _searchQuery.value = q
@@ -63,16 +66,25 @@ class ProductViewModel @Inject constructor(
         }
     }
 
-    fun addProduct(product: Product) {
+    fun addProductToInventory(product: Product) {
         viewModelScope.launch {
-            repository.addProductToInventory(shopId, product)
+            try {
+                repository.addProductToInventory(shopId, product)
+                getInventoryProducts()
+            } catch (e: Exception) {
+                _errorMessage.value = e.message
+            }
         }
     }
 
     fun removeProductFromInventory(productId: Int) {
         viewModelScope.launch {
-            repository.removeProductFromInventory(shopId, productId)
-            getInventoryProducts()
+            try {
+                repository.removeProductFromInventory(shopId, productId)
+                getInventoryProducts()
+            } catch (e: Exception) {
+                _errorMessage.value = e.message
+            }
         }
     }
 }

@@ -39,22 +39,34 @@ class InventoryViewModel @Inject constructor(
 
     fun addProductToInventory(product: Product) {
         viewModelScope.launch {
+            try {
             repository.addProductToInventory(shopId, product)
             getInventoryProducts()
+            } catch (e: Exception) {
+                _errorMessage.value = e.message
+            }
         }
     }
 
     fun removeProductFromInventory(productId: Int) {
         viewModelScope.launch {
+            try {
             repository.removeProductFromInventory(shopId, productId)
             getInventoryProducts()
+            } catch (e: Exception) {
+                _errorMessage.value = e.message
+            }
         }
     }
 
     fun updateProductPrice(productId: Int, newPrice: Double) {
         viewModelScope.launch {
+            try {
             repository.updateProductPrice(shopId, productId, newPrice)
             getInventoryProducts()
+            } catch (e: Exception) {
+                _errorMessage.value = e.message
+            }
         }
     }
 }
