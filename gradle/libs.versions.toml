@@ -2,12 +2,14 @@
 agp = "8.13.0"
 kotlin = "2.2.20"
 coreKtx = "1.17.0"
+coroutines = "1.10.2" # Use the latest stable version
 junit = "4.13.2"
 junitVersion = "1.3.0"
 espressoCore = "3.7.0"
 lifecycleRuntimeKtx = "2.9.4"
 activityCompose = "1.11.0"
 composeBom = "2025.09.01"
+datastorePreferences = "1.1.1"
 ## DEPENDENCIES
 roomRuntime = "2.8.1" # Room
 coilCompose = "3.3.0" # Coil
@@ -19,6 +21,12 @@ lifecycleViewmodel = "2.9.4" # ViewModel
 materialIconsExtended = "1.7.8" # Material icons extended
 kspVersion = "2.2.20-2.0.3"
 material3 = "1.4.0" # ksp plugin
+# CameraX y MLKit
+camerax = "1.3.1"
+mlkitBarcode = "17.2.0"
+foundationLayout = "1.9.4"
+foundation = "1.9.4"
+engageCore = "1.5.10" # ksp plugin
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -35,7 +43,17 @@ androidx-compose-ui-tooling-preview = { group = "androidx.compose.ui", name = "u
 androidx-compose-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
 androidx-compose-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
 androidx-compose-material3 = { group = "androidx.compose.material3", name = "material3" }
+androidx-datastore-preferences = { group = "androidx.datastore", name = "datastore-preferences", version.ref = "datastorePreferences" }
 
+# CameraX
+androidx-camera-core = { group = "androidx.camera", name = "camera-core", version.ref = "camerax" }
+androidx-camera-camera2 = { group = "androidx.camera", name = "camera-camera2", version.ref = "camerax" }
+androidx-camera-lifecycle = { group = "androidx.camera", name = "camera-lifecycle", version.ref = "camerax" }
+androidx-camera-view = { group = "androidx.camera", name = "camera-view", version.ref = "camerax" }
+kotlinx-coroutines-android = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android", version.ref = "coroutines" }
+
+# ML Kit
+google-mlkit-barcode = { group = "com.google.mlkit", name = "barcode-scanning", version.ref = "mlkitBarcode" }
 # Room
 androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref = "roomRuntime" }
 androidx-room-ktx = { module = "androidx.room:room-ktx", version.ref = "roomRuntime" }
@@ -66,6 +84,9 @@ androidx-lifecycle-viewmodel-ktx = { group = "androidx.lifecycle", name = "lifec
 # Material icons extended
 androidx-material-icons-extended = { group = "androidx.compose.material", name = "material-icons-extended", version.ref = "materialIconsExtended" }
 androidx-material3 = { group = "androidx.compose.material3", name = "material3", version.ref = "material3" }
+androidx-compose-foundation-layout = { group = "androidx.compose.foundation", name = "foundation-layout", version.ref = "foundationLayout" }
+androidx-compose-foundation = { group = "androidx.compose.foundation", name = "foundation", version.ref = "foundation" }
+engage-core = { group = "com.google.android.engage", name = "engage-core", version.ref = "engageCore" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

@@ -8,29 +8,20 @@ import androidx.compose.material.icons.filled.Inbox
 import androidx.compose.material.icons.filled.Savings
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Storefront
-import androidx.compose.material3.BottomAppBar
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.NavigationBarItem
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.navigation.compose.currentBackStackEntryAsState
-import androidx.navigation.compose.rememberNavController
+import androidx.navigation.NavController
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.*
 import com.soulware.tcompro.R
 import com.soulware.tcompro.core.ui.components.LogoContent
 import com.soulware.tcompro.features.finances.presentation.FinancesScreen
-import com.soulware.tcompro.features.inventory.InventoryScreen
-import com.soulware.tcompro.features.orders.presentation.OrdersScreen
+import com.soulware.tcompro.features.inventory.presentation.inventory.InventoryScreen
+import com.soulware.tcompro.features.orders.presentation.OrdersNavGraph
 import com.soulware.tcompro.features.settings.presentation.SettingsScreen
 import com.soulware.tcompro.features.shop.presentation.ShopScreen
 
@@ -47,8 +38,13 @@ sealed class MainTabRoute(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MainContainer(logoImageResId: Int) {
-    val navigationItems = listOf(
+fun MainContainer(
+    logoImageResId: Int,
+    navController: NavController
+) {
+    val bottomNavController = rememberNavController()
+
+    val tabs = listOf(
         MainTabRoute.Orders,
         MainTabRoute.Inventory,
         MainTabRoute.Shop,
@@ -56,31 +52,25 @@ fun MainContainer(logoImageResId: Int) {
         MainTabRoute.Settings
     )
 
-    val bottomNavController = rememberNavController()
-    val currentDestination by bottomNavController.currentBackStackEntryAsState()
-    val currentRoute = currentDestination?.destination?.route
+    val currentBackStackEntry by bottomNavController.currentBackStackEntryAsState()
+    val currentRoute = currentBackStackEntry?.destination?.route
 
     Scaffold(
         topBar = {
             TopAppBar(
-                title = {
-                    LogoContent(logoImage = painterResource(logoImageResId))
-                },
+                title = { LogoContent(logoImage = painterResource(logoImageResId)) },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
-                    titleContentColor = MaterialTheme.colorScheme.onPrimary
+                    containerColor = MaterialTheme.colorScheme.surfaceContainerHighest
                 )
             )
         },
         bottomBar = {
             BottomAppBar {
-                navigationItems.forEach { item ->
-                    val selected = item.route == currentRoute
-
+                tabs.forEach { tab ->
                     NavigationBarItem(
-                        selected = selected,
+                        selected = currentRoute == tab.route,
                         onClick = {
-                            bottomNavController.navigate(item.route) {
+                            bottomNavController.navigate(tab.route) {
                                 popUpTo(bottomNavController.graph.startDestinationId) {
                                     saveState = true
                                 }
@@ -89,65 +79,56 @@ fun MainContainer(logoImageResId: Int) {
                             }
                         },
                         icon = {
-                            val tintColor = if (selected) {
+                            val tint = if (currentRoute == tab.route)
                                 MaterialTheme.colorScheme.primary
-                            } else {
+                            else
                                 MaterialTheme.colorScheme.onSurfaceVariant
-                            }
 
-                            when (item) {
-                                is MainTabRoute.Orders -> Icon(
-                                    Icons.Default.AllInbox,
-                                    stringResource(R.string.desc_orders_tab),
-                                    tint = tintColor
-                                )
-                                is MainTabRoute.Inventory -> Icon(
-                                    Icons.Default.Inbox,
-                                    stringResource(R.string.desc_inventory_tab),
-                                    tint = tintColor
-                                )
-                                is MainTabRoute.Shop -> Icon(
-                                    Icons.Default.Storefront,
-                                    stringResource(R.string.desc_shop_tab),
-                                    tint = tintColor
-                                )
-                                is MainTabRoute.Finances -> Icon(
-                                    Icons.Default.Savings,
-                                    stringResource(R.string.desc_finances_tab),
-                                    tint = tintColor
-                                )
-                                is MainTabRoute.Settings -> Icon(
-                                    Icons.Default.Settings,
-                                    stringResource(R.string.desc_settings_tab),
-                                    tint = tintColor
-                                )
+                            when (tab) {
+                                is MainTabRoute.Orders -> Icon(Icons.Default.AllInbox, "", tint = tint)
+                                is MainTabRoute.Inventory -> Icon(Icons.Default.Inbox, "", tint = tint)
+                                is MainTabRoute.Shop -> Icon(Icons.Default.Storefront, "", tint = tint)
+                                is MainTabRoute.Finances -> Icon(Icons.Default.Savings, "", tint = tint)
+                                is MainTabRoute.Settings -> Icon(Icons.Default.Settings, "", tint = tint)
                             }
                         },
-                        label = { Text(stringResource(item.labelResId), style = MaterialTheme.typography.labelSmall) }
+                        label = {
+                            Text(stringResource(tab.labelResId), style = MaterialTheme.typography.labelSmall)
+                        }
                     )
                 }
             }
         }
-    ) { paddingValues ->
+    ) { padding ->
+
         NavHost(
             navController = bottomNavController,
             startDestination = MainTabRoute.Orders.route,
-            modifier = Modifier.padding(paddingValues)
+            modifier = Modifier.padding(padding)
         ) {
+
             composable(MainTabRoute.Orders.route) {
-                OrdersScreen()
+                val ordersNavController = rememberNavController()
+                OrdersNavGraph(
+                    navController = ordersNavController,
+                    rootNavController = navController as NavHostController
+                )
             }
+
             composable(MainTabRoute.Inventory.route) {
                 InventoryScreen()
             }
+
             composable(MainTabRoute.Shop.route) {
-                ShopScreen()
+                ShopScreen(navController as NavHostController)
             }
+
             composable(MainTabRoute.Finances.route) {
                 FinancesScreen()
             }
+
             composable(MainTabRoute.Settings.route) {
-                SettingsScreen()
+                SettingsScreen(navController = navController as NavHostController)
             }
         }
     }

@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "632573228731",
+    "project_id": "t-compro",
+    "storage_bucket": "t-compro.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:632573228731:android:c4222c8c7f77e83376db9e",
+        "android_client_info": {
+          "package_name": "com.soulware.tcompro"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBEt0BP31OHXVuzM0_XBgOHnUpgwWqOp0k"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
