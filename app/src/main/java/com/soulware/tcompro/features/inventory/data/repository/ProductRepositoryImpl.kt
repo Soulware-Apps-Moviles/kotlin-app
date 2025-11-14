@@ -27,6 +27,7 @@ class ProductRepositoryImpl(
             shopId = shopId,
             catalogProductId = 0, // Not used but required
             name = "",
+            category = "",
             price = 0.0,
             description = null,
             isAvailable = false,
@@ -42,6 +43,7 @@ class ProductRepositoryImpl(
             price = newPrice,
             catalogProductId = 0, // Not used but required
             name = "",
+            category = "",
             description = null,
             isAvailable = false,
             imageUrl = null
@@ -59,6 +61,7 @@ fun ProductDto.toDomain(): Product {
         id = id ?: 0,
         catalogProductId = catalogProductId,
         name = name,
+        category = category,
         price = price,
         description = description,
         isAvailable = isAvailable,
@@ -72,6 +75,7 @@ fun Product.toDto(shopId: Int): ProductDto {
         shopId = shopId,
         catalogProductId = catalogProductId,
         name = name,
+        category = category,
         price = price,
         description = description,
         isAvailable = isAvailable,
