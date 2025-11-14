@@ -6,6 +6,7 @@ import com.soulware.tcompro.features.inventory.domain.model.Product
 import com.soulware.tcompro.features.inventory.domain.repository.ProductRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -18,8 +19,13 @@ class ProductViewModel @Inject constructor(
     private val shopId = 10004
 
     private val _allProducts = MutableStateFlow<List<Product>>(emptyList())
+
     private val _searchQuery = MutableStateFlow("")
     private val _errorMessage = MutableStateFlow<String?>(null)
+
+    private val _inventoryProducts = MutableStateFlow<List<Product>>(emptyList())
+
+    val inventoryProducts = _inventoryProducts.asStateFlow()
 
     val products = combine(
         _allProducts,
@@ -47,15 +53,26 @@ class ProductViewModel @Inject constructor(
         }
     }
 
+    fun getInventoryProducts() {
+        viewModelScope.launch {
+            try {
+                _inventoryProducts.value = repository.getInventoryProducts(shopId)
+            } catch (e: Exception) {
+                _errorMessage.value = e.message
+            }
+        }
+    }
+
     fun addProduct(product: Product) {
         viewModelScope.launch {
             repository.addProductToInventory(shopId, product)
         }
     }
 
-    fun removeProduct(id: Int) {
+    fun removeProductFromInventory(productId: Int) {
         viewModelScope.launch {
-            repository.removeProductFromInventory(shopId, id)
+            repository.removeProductFromInventory(shopId, productId)
+            getInventoryProducts()
         }
     }
 }

@@ -87,7 +87,8 @@ fun CatalogScreen(
                 items(filteredProducts) { product ->
                     ProductCard(
                         product = product,
-                        onAdd = { viewModel.addProduct(product) }
+                        onAdd = { viewModel.addProduct(product) },
+                        onRemove = { viewModel.removeProductFromInventory(product.id) }
                     )
                 }
             }
