@@ -5,7 +5,7 @@ data class ProductDto(
     val shopId: Int,
     val catalogProductId: Int,
     val name: String,
-    val category: String,
+    val category: String?,
     val price: Double,
     val description: String?,
     val isAvailable: Boolean,

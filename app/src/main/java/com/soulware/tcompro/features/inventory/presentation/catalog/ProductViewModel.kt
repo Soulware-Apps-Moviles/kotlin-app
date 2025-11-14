@@ -66,7 +66,7 @@ class ProductViewModel @Inject constructor(
         }
     }
 
-    fun addProduct(product: Product) {
+    fun addProductToInventory(product: Product) {
         viewModelScope.launch {
             try {
                 repository.addProductToInventory(shopId, product)
