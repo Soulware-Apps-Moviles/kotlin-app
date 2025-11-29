@@ -1,24 +1,5 @@
-/*
- * NetworkModule (Módulo de Red - Hilt)
- *
- * Esta es la clase de configuración de red más importante de la app.
- * Utiliza Hilt (Inyección de Dependencias) para "enseñarle" a la app cómo
- * crear y proveer las instancias de Retrofit, OkHttp y los ApiServices.
- *
- * Funcionalidades:
- * - Define Calificadores (@TcomproApi, @SupabaseApi) para diferenciar entre
- * nuestro backend (Tcompro) y el backend de autenticación (Supabase).
- * - Define las URLs base y la API Key de Supabase.
- * - Crea dos Interceptores:
- * 1. SupabaseInterceptor: Añade la 'apiKey' y 'Content-Type' a las llamadas de Supabase.
- * 2. TcomproInterceptor: Añade el 'Authorization: Bearer <token>' (usando AuthInterceptor)
- * a las llamadas de nuestro backend.
- * - Crea dos Clientes OkHttp: Cada uno configurado con su interceptor respectivo.
- * - Crea dos Instancias de Retrofit: Cada una configurada con su cliente OkHttp y URL base.
- * - Provee los ApiServices (ShopApiService, AuthApiService, ProfileApiService)
- * listos para ser inyectados en los Repositorios, usando la instancia de Retrofit correcta.
- */
 package com.soulware.tcompro.core.di
+
 import com.soulware.tcompro.features.auth.data.AuthApiService
 import com.soulware.tcompro.features.auth.data.ProfileApiService
 import com.soulware.tcompro.features.shop.data.ShopApiService
@@ -51,6 +32,7 @@ annotation class SupabaseInterceptor
 @Retention(AnnotationRetention.BINARY)
 annotation class TcomproInterceptor
 
+// --- NUEVO: Calificador para el cliente de Login ---
 @Qualifier
 @Retention(AnnotationRetention.BINARY)
 annotation class TcomproApiLogin
@@ -89,7 +71,7 @@ object NetworkModule {
         return authInterceptor
     }
 
-
+    // 1. CLIENTE NORMAL (Con Interceptor) -> Para Shop, Productos, etc.
     @Provides
     @Singleton
     @TcomproApi
@@ -98,6 +80,15 @@ object NetworkModule {
     ): OkHttpClient {
         return OkHttpClient.Builder()
             .addInterceptor(authInterceptor)
+            .build()
+    }
+
+    // 2. CLIENTE LOGIN (Sin Interceptor) -> Solo para AuthRepository
+    @Provides
+    @Singleton
+    @TcomproApiLogin
+    fun provideTcomproLoginOkHttpClient(): OkHttpClient {
+        return OkHttpClient.Builder()
             .build()
     }
 
@@ -112,6 +103,7 @@ object NetworkModule {
             .build()
     }
 
+    // Retrofit Normal
     @Provides
     @Singleton
     @TcomproApi
@@ -125,11 +117,19 @@ object NetworkModule {
             .addConverterFactory(GsonConverterFactory.create(gson))
             .build()
     }
+
+    // Retrofit Login (Nuevo)
     @Provides
     @Singleton
     @TcomproApiLogin
-    fun provideTcomproLoginOkHttpClient(): OkHttpClient {
-        return OkHttpClient.Builder()
+    fun provideTcomproLoginRetrofit(
+        gson: Gson,
+        @TcomproApiLogin okHttpClient: OkHttpClient
+    ): Retrofit {
+        return Retrofit.Builder()
+            .baseUrl(TCOMPRO_BASE_URL)
+            .client(okHttpClient)
+            .addConverterFactory(GsonConverterFactory.create(gson))
             .build()
     }
 
@@ -147,36 +147,23 @@ object NetworkModule {
             .build()
     }
 
+    // ShopApi usa el cliente NORMAL
     @Provides
     @Singleton
     fun provideShopApiService(@TcomproApi retrofit: Retrofit): ShopApiService {
         return retrofit.create(ShopApiService::class.java)
     }
-    @Provides
-    @Singleton
-    @TcomproApiLogin
-    fun provideTcomproLoginRetrofit(
-        gson: Gson,
-        @TcomproApiLogin okHttpClient: OkHttpClient
-    ): Retrofit {
-        return Retrofit.Builder()
-            .baseUrl(TCOMPRO_BASE_URL)
-            .client(okHttpClient)
-            .addConverterFactory(GsonConverterFactory.create(gson))
-            .build()
-    }
+
     @Provides
     @Singleton
     fun provideAuthApiService(@SupabaseApi retrofit: Retrofit): AuthApiService {
         return retrofit.create(AuthApiService::class.java)
     }
 
+    // ProfileApiService usa el cliente LOGIN (¡IMPORTANTE!)
     @Provides
     @Singleton
-    fun provideProfileApiService(
-        @TcomproApiLogin retrofit: Retrofit
-    ): ProfileApiService {
+    fun provideProfileApiService(@TcomproApiLogin retrofit: Retrofit): ProfileApiService {
         return retrofit.create(ProfileApiService::class.java)
     }
-
 }

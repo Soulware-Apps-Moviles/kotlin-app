@@ -1,16 +1,3 @@
-/*
- * ProfileApiService (Servicio de API de Perfil)
- *
- * Define la interfaz de Retrofit para comunicarse con el backend Tcompro
- * (no con Supabase) para gestionar la lógica de negocio de perfiles y dueños.
- *
- * Funcionalidades:
- * - Define el endpoint 'createProfile' (POST) para el flujo de Registro (Paso 2).
- * - Define el endpoint 'getOwnerByEmail' (GET) para el flujo de Login (Paso 2),
- * que es crucial para obtener el 'shopId' del usuario.
- * - Define los modelos de datos (DTOs) para la petición (CreateProfileRequest)
- * y la respuesta (OwnerResource).
- */
 package com.soulware.tcompro.features.auth.data
 
 import retrofit2.http.Body
@@ -21,8 +8,12 @@ import retrofit2.http.Query
 
 interface ProfileApiService {
 
-    @POST("profiles/v1")
-    suspend fun createProfile(@Body request: CreateProfileRequest): Any
+    // --- CORRECCIÓN: AÑADIMOS EL HEADER DE AUTORIZACIÓN ---
+    @POST("profile/v1")
+    suspend fun createProfile(
+        @Header("Authorization") token: String, // <--- Nuevo parámetro
+        @Body request: CreateProfileRequest
+    ): Unit
 
     @GET("owners/v1/")
     suspend fun getOwnerByEmail(
@@ -31,12 +22,14 @@ interface ProfileApiService {
     ): OwnerResource
 }
 
+// Asegúrate de que CreateProfileRequest tenga el rol OWNER como hablamos
 data class CreateProfileRequest(
     val firstName: String,
     val lastName: String,
     val email: String,
     val phone: String,
-    val authId: String
+    val authId: String,
+    val role: String ="SHOP_OWNER"
 )
 
 data class OwnerResource(

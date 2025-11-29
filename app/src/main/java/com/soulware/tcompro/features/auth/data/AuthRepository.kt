@@ -1,21 +1,3 @@
-/*
- * AuthRepository (Repositorio de Autenticación)
- *
- * Esta clase es el "traductor" o Repositorio para la lógica de autenticación.
- * Es responsable de coordinar las llamadas a las dos APIs (Supabase y el backend Tcompro).
- *
- * Funcionalidades:
- * - Inyecta 'AuthApiService' (para Supabase) y 'ProfileApiService' (para Tcompro).
- * - Inyecta el 'SessionManager' para guardar la sesión.
- * - Implementa el flujo de Login en 2 pasos:
- * 1. Autentica en Supabase (obtiene token).
- * 2. Guarda el token (para que el AuthInterceptor lo use).
- * 3. Llama al backend Tcompro (obtiene shopId).
- * 4. Guarda el shopId.
- * - Implementa el flujo de Register en 2 pasos:
- * 1. Crea el usuario en Supabase (obtiene authId).
- * 2. Crea el perfil en el backend Tcompro (envía el authId).
- */
 package com.soulware.tcompro.features.auth.data
 
 import com.soulware.tcompro.core.data.SessionManager
@@ -38,6 +20,7 @@ class AuthRepository @Inject constructor(
 
     suspend fun login(email: String, pass: String): AuthResult? {
         return try {
+            // 1. Autenticar con Supabase
             val request = AuthRequest(email, pass)
             val response = authApi.signIn(request)
 
@@ -49,18 +32,20 @@ class AuthRepository @Inject constructor(
                 return null
             }
 
-
+            // 2. Obtener datos del Dueño (Shop ID) desde tu Backend
+            // Pasamos el token manualmente usando "Bearer "
             val formattedToken = "Bearer $accessToken"
 
             val owner = profileApi.getOwnerByEmail(
                 token = formattedToken,
                 email = userEmail
             )
+
             val shopId = owner.shopId
 
+            // 3. Guardar la sesión real
             sessionManager.saveAccessToken(accessToken)
             sessionManager.saveShopId(shopId)
-
 
             AuthResult(
                 authId = authId,
@@ -83,27 +68,48 @@ class AuthRepository @Inject constructor(
         phone: String
     ): Boolean {
         return try {
+            // 1. Crear usuario en Supabase
             val supabaseRequest = AuthRequest(email, pass)
             val supabaseResponse = authApi.signUp(supabaseRequest)
 
             val authId = supabaseResponse.user?.id
-            if (authId == null) {
+            // OBTENEMOS EL TOKEN DEL REGISTRO
+            val accessToken = supabaseResponse.accessToken
+
+            // Verificamos que tengamos ID y Token
+            // Nota: Si Supabase pide confirmar email, el token podría ser null.
+            // Para la demo, asume que 'Enable Email Confirmation' está OFF en Supabase.
+            if (authId == null || accessToken == null) {
                 return false
             }
+
+            // 2. Crear perfil en tu Backend (ENVIANDO EL TOKEN)
+            val formattedToken = "Bearer $accessToken" // <--- Token formateado
+
+            // 1. Limpiamos el teléfono de espacios o guiones
+            val cleanPhoneInput = phone.replace("\\s".toRegex(), "").replace("-", "")
+
+            // 2. Agregamos el prefijo si falta
+            val finalPhone = if (cleanPhoneInput.startsWith("+")) cleanPhoneInput else "+51$cleanPhoneInput"
 
             val profileRequest = CreateProfileRequest(
                 firstName = firstName,
                 lastName = lastName,
                 email = email,
-                phone = phone,
+                phone = finalPhone,
                 authId = authId
             )
-            profileApi.createProfile(profileRequest)
 
-            return true
+            // Pasamos el token aquí
+            profileApi.createProfile(
+                token = formattedToken,
+                request = profileRequest
+            )
+
+            true
         } catch (e: Exception) {
             e.printStackTrace()
-            return false
+            false
         }
     }
 }
