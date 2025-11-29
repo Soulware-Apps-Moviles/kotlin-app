@@ -32,7 +32,6 @@ annotation class SupabaseInterceptor
 @Retention(AnnotationRetention.BINARY)
 annotation class TcomproInterceptor
 
-// --- NUEVO: Calificador para el cliente de Login ---
 @Qualifier
 @Retention(AnnotationRetention.BINARY)
 annotation class TcomproApiLogin
@@ -71,7 +70,6 @@ object NetworkModule {
         return authInterceptor
     }
 
-    // 1. CLIENTE NORMAL (Con Interceptor) -> Para Shop, Productos, etc.
     @Provides
     @Singleton
     @TcomproApi
@@ -83,7 +81,6 @@ object NetworkModule {
             .build()
     }
 
-    // 2. CLIENTE LOGIN (Sin Interceptor) -> Solo para AuthRepository
     @Provides
     @Singleton
     @TcomproApiLogin
@@ -103,7 +100,6 @@ object NetworkModule {
             .build()
     }
 
-    // Retrofit Normal
     @Provides
     @Singleton
     @TcomproApi
@@ -147,7 +143,6 @@ object NetworkModule {
             .build()
     }
 
-    // ShopApi usa el cliente NORMAL
     @Provides
     @Singleton
     fun provideShopApiService(@TcomproApi retrofit: Retrofit): ShopApiService {
@@ -160,7 +155,6 @@ object NetworkModule {
         return retrofit.create(AuthApiService::class.java)
     }
 
-    // ProfileApiService usa el cliente LOGIN (¡IMPORTANTE!)
     @Provides
     @Singleton
     fun provideProfileApiService(@TcomproApiLogin retrofit: Retrofit): ProfileApiService {

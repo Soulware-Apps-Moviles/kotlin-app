@@ -1,15 +1,4 @@
-/*
- * SettingsScreen (Pantalla de Configuración)
- *
- * Muestra la lista de opciones de configuración (las 5).
- *
- * Funcionalidades:
- * - Inyecta 'SettingsViewModel' y 'navController' (Padre).
- * - Observa el 'settingsState' del ViewModel.
- * - Muestra la UI para Notificaciones (Switch), Tema y Lenguaje (Diálogos).
- * - Navega a 'AboutScreen' al hacer clic en "Acerca de".
- * - Llama a 'viewModel.logout()' y navega al Login al presionar "Cerrar Sesión".
- */
+
 package com.soulware.tcompro.features.settings.presentation
 
 import androidx.compose.foundation.BorderStroke
@@ -33,6 +22,8 @@ import androidx.compose.material.icons.filled.Language
 import androidx.compose.material.icons.filled.Logout
 import androidx.compose.material.icons.filled.ModeNight
 import androidx.compose.material.icons.filled.Notifications
+import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Store
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -53,10 +44,8 @@ fun SettingsScreen(
     navController: NavHostController,
     viewModel: SettingsViewModel = hiltViewModel()
 ) {
-    // 1. Observa el estado de las preferencias
     val settings by viewModel.settingsState.collectAsState()
 
-    // 2. Estados para controlar qué diálogo (popup) se muestra
     var showThemeDialog by remember { mutableStateOf(false) }
     var showLanguageDialog by remember { mutableStateOf(false) }
 
@@ -65,7 +54,6 @@ fun SettingsScreen(
             .fillMaxSize()
             .padding(16.dp)
     ) {
-        // Título de la pantalla
         Text(
             text = "Settings",
             style = MaterialTheme.typography.headlineLarge,
@@ -73,7 +61,6 @@ fun SettingsScreen(
             modifier = Modifier.padding(bottom = 24.dp)
         )
 
-        // --- 1. Notificaciones ---
         SettingItemRow(
             icon = Icons.Default.Notifications,
             title = "Enable Notifications",
@@ -86,7 +73,25 @@ fun SettingsScreen(
                 }
             )
         }
+        Divider(modifier = Modifier.padding(vertical = 8.dp))
 
+        Text("Cuenta", style = MaterialTheme.typography.labelLarge, color = MaterialTheme.colorScheme.primary)
+
+        SettingItemRow(
+            icon = Icons.Default.Person,
+            title = "Editar Perfil",
+            subtitle = "Nombre, Teléfono, Password",
+            onClick = {  }
+        )
+
+        SettingItemRow(
+            icon = Icons.Default.Store,
+            title = "Datos de la Tienda",
+            subtitle = "Dirección y Horarios",
+            onClick = {  }
+        )
+
+        Divider(modifier = Modifier.padding(vertical = 8.dp))
         Divider(modifier = Modifier.padding(vertical = 8.dp))
 
         // --- 2. Modo Oscuro/Claro ---
@@ -109,21 +114,18 @@ fun SettingsScreen(
 
         Divider(modifier = Modifier.padding(vertical = 8.dp))
 
-        // --- 4. Información "Acerca de" ---
         SettingItemRow(
             icon = Icons.Default.Info,
             title = "About",
             subtitle = "App version, support, and terms",
-            onClick = { navController.navigate("about") } // Navega a la nueva pantalla
+            onClick = { navController.navigate("about") }
         )
 
-        Spacer(modifier = Modifier.weight(1f)) // Empuja el Logout al fondo
+        Spacer(modifier = Modifier.weight(1f))
 
-        // --- 5. Cerrar Sesión (Logout) ---
         OutlinedButton(
             onClick = {
                 viewModel.logout()
-                // Navega al Login y borra todo el historial
                 navController.navigate(RootRoute.Login.route) {
                     popUpTo(navController.graph.id) {
                         inclusive = true
@@ -144,7 +146,6 @@ fun SettingsScreen(
         }
     }
 
-    // --- Diálogos (Popups) ---
     if (showThemeDialog) {
         ThemeSelectionDialog(
             currentTheme = settings.appTheme,
@@ -168,7 +169,6 @@ fun SettingsScreen(
     }
 }
 
-// --- Componente reutilizable para las filas ---
 @Composable
 private fun SettingItemRow(
     icon: ImageVector,
@@ -205,7 +205,6 @@ private fun SettingItemRow(
     }
 }
 
-// --- Diálogo para el Tema ---
 @Composable
 private fun ThemeSelectionDialog(
     currentTheme: String,
@@ -249,7 +248,6 @@ private fun ThemeSelectionDialog(
     )
 }
 
-// --- Diálogo para el Idioma ---
 @Composable
 private fun LanguageSelectionDialog(
     currentLanguage: String,

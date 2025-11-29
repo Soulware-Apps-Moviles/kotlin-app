@@ -1,10 +1,4 @@
-/*
- * PreferencesManager (Gestor de Preferencias)
- *
- * Similar al SessionManager, pero se encarga de las preferencias locales
- * de la UI, como el tema (modo oscuro) y las notificaciones.
- * Utiliza Jetpack DataStore.
- */
+
 package com.soulware.tcompro.core.data
 
 import android.content.Context
@@ -56,9 +50,8 @@ class PreferencesManager @Inject constructor(
             }
         }
         .map { preferences ->
-            // 5. Mapea las preferencias o usa valores por defecto
             val notifications = preferences[PreferencesKeys.NOTIFICATIONS_ENABLED] ?: true
-            val theme = preferences[PreferencesKeys.APP_THEME] ?: AppTheme.SYSTEM
+            val theme = preferences[PreferencesKeys.APP_THEME] ?: AppTheme.LIGHT
             val language = preferences[PreferencesKeys.APP_LANGUAGE] ?: "es" // Español por defecto
 
             AppSettings(notifications, theme, language)

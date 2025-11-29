@@ -1,23 +1,10 @@
-/*
- * RegisterScreen (Pantalla de Registro)
- *
- * Este Composable define la UI para la pantalla de Registro de nuevo usuario.
- * Se encarga de recoger los datos del usuario (nombre, email, teléfono, contraseña).
- *
- * Funcionalidades:
- * - Muestra un formulario de registro con validación (ej. contraseñas coinciden).
- * - Inyecta el 'AuthViewModel' (Hilt) para manejar la lógica de registro.
- * - Observa el 'uiState' del ViewModel para reaccionar a cambios (LOADING, ERROR, SUCCESS).
- * - En 'LaunchedEffect', maneja el resultado del registro:
- * - SUCCESS_REGISTER: Muestra un Toast de éxito y regresa a la pantalla de Login.
- * - ERROR: Muestra un Toast con el mensaje de error.
- * - Llama a 'viewModel.register()' cuando el usuario presiona el botón de Registrar.
- */
+
 package com.soulware.tcompro.features.auth.presentation
 
 import android.widget.Toast
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
@@ -51,13 +38,15 @@ fun RegisterScreen(
     var password by remember { mutableStateOf("") }
     var confirmPassword by remember { mutableStateOf("") }
 
+    var selectedRole by remember { mutableStateOf("SHOP_OWNER") }
+
     val uiState by viewModel.uiState.collectAsState()
     val context = LocalContext.current
 
     LaunchedEffect(key1 = uiState.status) {
         when (uiState.status) {
             AuthStatus.SUCCESS_REGISTER -> {
-                Toast.makeText(context, "Account created! Please log in.", Toast.LENGTH_LONG).show()
+                Toast.makeText(context, "Cuenta creada! Por favor inicia sesión.", Toast.LENGTH_LONG).show()
                 navController.popBackStack()
             }
             AuthStatus.ERROR -> {
@@ -70,7 +59,7 @@ fun RegisterScreen(
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
-                title = { Text("Create Account", fontWeight = FontWeight.Bold) },
+                title = { Text("Crear Cuenta", fontWeight = FontWeight.Bold) },
                 navigationIcon = {
                     IconButton(onClick = { navController.popBackStack() }) {
                         Icon(Icons.Default.ArrowBack, contentDescription = "Go back")
@@ -92,7 +81,7 @@ fun RegisterScreen(
                 value = firstName,
                 onValueChange = { firstName = it },
                 modifier = Modifier.fillMaxWidth(),
-                label = { Text("First Name") },
+                label = { Text("Nombre") },
                 leadingIcon = { Icon(Icons.Default.Person, contentDescription = null) },
                 singleLine = true,
                 shape = RoundedCornerShape(12.dp),
@@ -104,7 +93,7 @@ fun RegisterScreen(
                 value = lastName,
                 onValueChange = { lastName = it },
                 modifier = Modifier.fillMaxWidth(),
-                label = { Text("Last Name") },
+                label = { Text("Apellido") },
                 leadingIcon = { Icon(Icons.Default.Person, contentDescription = null) },
                 singleLine = true,
                 shape = RoundedCornerShape(12.dp),
@@ -129,7 +118,7 @@ fun RegisterScreen(
                 value = phone,
                 onValueChange = { phone = it },
                 modifier = Modifier.fillMaxWidth(),
-                label = { Text("Phone") },
+                label = { Text("Teléfono") },
                 leadingIcon = { Icon(Icons.Default.Phone, contentDescription = null) },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
                 singleLine = true,
@@ -142,7 +131,7 @@ fun RegisterScreen(
                 value = password,
                 onValueChange = { password = it },
                 modifier = Modifier.fillMaxWidth(),
-                label = { Text("Password") },
+                label = { Text("Contraseña") },
                 leadingIcon = { Icon(Icons.Default.Lock, contentDescription = null) },
                 visualTransformation = PasswordVisualTransformation(),
                 singleLine = true,
@@ -155,18 +144,62 @@ fun RegisterScreen(
                 value = confirmPassword,
                 onValueChange = { confirmPassword = it },
                 modifier = Modifier.fillMaxWidth(),
-                label = { Text("Confirm Password") },
+                label = { Text("Confirmar Contraseña") },
                 leadingIcon = { Icon(Icons.Default.Lock, contentDescription = null) },
                 visualTransformation = PasswordVisualTransformation(),
                 singleLine = true,
                 shape = RoundedCornerShape(12.dp),
                 isError = uiState.status == AuthStatus.ERROR || password != confirmPassword
             )
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            Text("Tipo de Cuenta:", style = MaterialTheme.typography.labelLarge, fontWeight = FontWeight.Bold)
+            Spacer(modifier = Modifier.height(8.dp))
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                // Opción DUEÑO
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier
+                        .weight(1f)
+                        .selectable(
+                            selected = (selectedRole == "SHOP_OWNER"),
+                            onClick = { selectedRole = "SHOP_OWNER" }
+                        )
+                ) {
+                    RadioButton(
+                        selected = (selectedRole == "SHOP_OWNER"),
+                        onClick = { selectedRole = "SHOP_OWNER" }
+                    )
+                    Text("Dueño")
+                }
+
+                // Opción PERSONAL
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier
+                        .weight(1f)
+                        .selectable(
+                            selected = (selectedRole == "SHOPKEEPER"),
+                            onClick = { selectedRole = "SHOPKEEPER" }
+                        )
+                ) {
+                    RadioButton(
+                        selected = (selectedRole == "SHOPKEEPER"),
+                        onClick = { selectedRole = "SHOPKEEPER" }
+                    )
+                    Text("Personal")
+                }
+            }
+
             Spacer(modifier = Modifier.height(32.dp))
 
             Button(
                 onClick = {
-                    viewModel.register(email, password, firstName, lastName, phone)
+                    viewModel.register(email, password, firstName, lastName, phone, selectedRole)
                 },
                 modifier = Modifier
                     .fillMaxWidth()
@@ -174,6 +207,10 @@ fun RegisterScreen(
                 shape = RoundedCornerShape(12.dp),
                 enabled = (password == confirmPassword) &&
                         (password.isNotBlank()) &&
+                        (firstName.isNotBlank()) && // Nuevo
+                        (lastName.isNotBlank()) &&  // Nuevo
+                        (email.isNotBlank()) &&     // Nuevo
+                        (phone.isNotBlank()) &&     // Nuevo
                         (uiState.status != AuthStatus.LOADING)
             ) {
                 if (uiState.status == AuthStatus.LOADING) {
@@ -182,7 +219,7 @@ fun RegisterScreen(
                         color = MaterialTheme.colorScheme.onPrimary
                     )
                 } else {
-                    Text("Register", style = MaterialTheme.typography.bodyLarge)
+                    Text("Registrarse", style = MaterialTheme.typography.bodyLarge)
                 }
             }
             Spacer(modifier = Modifier.height(32.dp))

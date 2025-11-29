@@ -1,10 +1,13 @@
 package com.soulware.tcompro.features.shop.data
 
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
+import retrofit2.http.Header
 import retrofit2.http.POST
 import retrofit2.http.Path
-import retrofit2.http.DELETE
+import retrofit2.http.Query
+
 interface ShopApiService {
 
     @GET("api/v1/shops/{shopId}/shopkeepers")
@@ -23,7 +26,21 @@ interface ShopApiService {
         @Path("shopId") shopId: String,
         @Path("shopkeeperId") shopkeeperId: Long
     ): Unit
+
+    @GET("shopkeepers/v1/email")
+    suspend fun getShopkeeperByEmail(
+        @Header("Authorization") token: String,
+        @Query("email") email: String
+    ): ShopkeeperResource
 }
+
+// --- CLASES FUERA DE LA INTERFAZ ---
+
+data class ShopkeeperResource(
+    val id: Long,
+    val profileId: String,
+    val shopId: Long?
+)
 
 data class ShopkeeperResponse(
     val id: Long,
@@ -35,7 +52,6 @@ data class ShopkeeperResponse(
     val phone: String,
     val isHired: Boolean
 )
-
 
 data class HireShopkeeperRequest(
     val authId: String

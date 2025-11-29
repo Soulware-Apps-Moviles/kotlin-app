@@ -1,15 +1,3 @@
-/*
- * SessionManager (Gestor de Sesión)
- *
- * Esta clase se encarga de gestionar la sesión del usuario utilizando Jetpack DataStore.
- * Define el "llavero" de la app ("tcompro_session") para persistir datos.
- *
- * Funcionalidades:
- * - Define la estructura de datos UserSession (accessToken, shopId).
- * - Expone un 'userSessionFlow' para observar cambios en la sesión en tiempo real.
- * - Proporciona funciones para guardar el 'accessToken' y el 'shopId' por separado.
- * - Proporciona una función 'clearSession' para cerrar la sesión (logout).
- */
 package com.soulware.tcompro.core.data
 
 import android.content.Context
@@ -30,7 +18,8 @@ import javax.inject.Singleton
 
 data class UserSession(
     val accessToken: String?,
-    val shopId: Long?
+    val shopId: Long?,
+    val role: String?
 )
 
 private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "tcompro_session")
@@ -42,6 +31,7 @@ class SessionManager @Inject constructor(
     private object PreferencesKeys {
         val ACCESS_TOKEN = stringPreferencesKey("access_token")
         val SHOP_ID = longPreferencesKey("shop_id")
+        val USER_ROLE = stringPreferencesKey("user_role")
     }
 
     val userSessionFlow: Flow<UserSession> = context.dataStore.data
@@ -55,19 +45,16 @@ class SessionManager @Inject constructor(
         .map { preferences ->
             UserSession(
                 accessToken = preferences[PreferencesKeys.ACCESS_TOKEN],
-                shopId = preferences[PreferencesKeys.SHOP_ID]
+                shopId = preferences[PreferencesKeys.SHOP_ID],
+                role = preferences[PreferencesKeys.USER_ROLE]
             )
         }
 
-    suspend fun saveAccessToken(accessToken: String) {
+    suspend fun saveSession(accessToken: String, shopId: Long, role: String) {
         context.dataStore.edit { preferences ->
             preferences[PreferencesKeys.ACCESS_TOKEN] = accessToken
-        }
-    }
-
-    suspend fun saveShopId(shopId: Long) {
-        context.dataStore.edit { preferences ->
             preferences[PreferencesKeys.SHOP_ID] = shopId
+            preferences[PreferencesKeys.USER_ROLE] = role
         }
     }
 
@@ -75,5 +62,12 @@ class SessionManager @Inject constructor(
         context.dataStore.edit { preferences ->
             preferences.clear()
         }
+    }
+
+    suspend fun saveAccessToken(token: String) {
+        context.dataStore.edit { it[PreferencesKeys.ACCESS_TOKEN] = token }
+    }
+    suspend fun saveShopId(id: Long) {
+        context.dataStore.edit { it[PreferencesKeys.SHOP_ID] = id }
     }
 }

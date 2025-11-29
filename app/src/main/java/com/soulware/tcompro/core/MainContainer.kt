@@ -1,3 +1,4 @@
+
 package com.soulware.tcompro.core
 
 import androidx.annotation.StringRes
@@ -21,6 +22,7 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -28,14 +30,27 @@ import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.ViewModel
 import com.soulware.tcompro.R
+import com.soulware.tcompro.core.data.SessionManager
 import com.soulware.tcompro.core.ui.components.LogoContent
 import com.soulware.tcompro.features.finances.presentation.FinancesScreen
 import com.soulware.tcompro.features.inventory.presentation.InventoryScreen
 import com.soulware.tcompro.features.orders.presentation.OrdersScreen
 import com.soulware.tcompro.features.settings.presentation.SettingsScreen
 import com.soulware.tcompro.features.shop.presentation.ShopScreen
-import com.soulware.tcompro.features.shop.presentation.AddTrustedCustomerScreen
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.map
+import javax.inject.Inject
+
+@HiltViewModel
+class MainViewModel @Inject constructor(
+    sessionManager: SessionManager
+) : ViewModel() {
+    val userRole = sessionManager.userSessionFlow.map { it.role }
+}
+
 sealed class MainTabRoute(
     override val route: String,
     @get:StringRes override val labelResId: Int
@@ -49,14 +64,29 @@ sealed class MainTabRoute(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MainContainer(logoImageResId: Int,navController: NavController) {
-    val navigationItems = listOf(
-        MainTabRoute.Orders,
-        MainTabRoute.Inventory,
-        MainTabRoute.Shop,
-        MainTabRoute.Finances,
-        MainTabRoute.Settings
-    )
+fun MainContainer(
+    logoImageResId: Int,
+    navController: NavController,
+    viewModel: MainViewModel = hiltViewModel() // Inyectamos el ViewModel aquí
+) {
+    val role by viewModel.userRole.collectAsState(initial = null)
+
+    // Decidimos qué pestañas mostrar
+    val navigationItems = if (role == "SHOPKEEPER") {
+        listOf(
+            MainTabRoute.Orders,
+            MainTabRoute.Inventory,
+            MainTabRoute.Settings
+        )
+    } else {
+        listOf(
+            MainTabRoute.Orders,
+            MainTabRoute.Inventory,
+            MainTabRoute.Shop,
+            MainTabRoute.Finances,
+            MainTabRoute.Settings
+        )
+    }
 
     val bottomNavController = rememberNavController()
     val currentDestination by bottomNavController.currentBackStackEntryAsState()

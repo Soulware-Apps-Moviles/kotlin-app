@@ -8,10 +8,9 @@ import retrofit2.http.Query
 
 interface ProfileApiService {
 
-    // --- CORRECCIÓN: AÑADIMOS EL HEADER DE AUTORIZACIÓN ---
     @POST("profile/v1")
     suspend fun createProfile(
-        @Header("Authorization") token: String, // <--- Nuevo parámetro
+        @Header("Authorization") token: String,
         @Body request: CreateProfileRequest
     ): Unit
 
@@ -22,15 +21,13 @@ interface ProfileApiService {
     ): OwnerResource
 }
 
-// Asegúrate de que CreateProfileRequest tenga el rol OWNER como hablamos
 data class CreateProfileRequest(
     val firstName: String,
     val lastName: String,
     val email: String,
     val phone: String,
     val authId: String,
-    val role: String ="SHOP_OWNER"
-)
+    val role: String = "SHOP_OWNER")
 
 data class OwnerResource(
     val id: Long,
