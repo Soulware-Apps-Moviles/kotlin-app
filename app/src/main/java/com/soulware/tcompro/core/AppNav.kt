@@ -1,18 +1,3 @@
-/*
- * AppNav (Grafo de Navegación Principal)
- *
- * Este Composable define el grafo de navegación raíz de la aplicación usando NavHost.
- * Es el primer punto de control de navegación.
- *
- * Funcionalidades:
- * - Inicia la app en la ruta de Login (RootRoute.Login).
- * - Define todas las rutas raíz (full-screen):
- * 1. "login": Muestra LoginScreen.
- * 2. "register": Muestra RegisterScreen.
- * 3. "main_container": Muestra MainContainer (la app principal post-login).
- * 4. "add_employee_qr": Muestra la pantalla de la cámara.
- * 5. "add_employee_code": Muestra la pantalla de añadir por código.
- */
 package com.soulware.tcompro.core
 
 import androidx.compose.runtime.Composable
@@ -28,6 +13,8 @@ import com.soulware.tcompro.features.shop.presentation.AddEmployeeByCodeScreen
 import com.soulware.tcompro.features.shop.presentation.AddEmployeeByQRScreen
 import com.soulware.tcompro.features.shop.presentation.AddTrustedCustomerScreen
 import com.soulware.tcompro.features.settings.presentation.AboutScreen
+import com.soulware.tcompro.features.shop.presentation.CreateShopScreen // Asegúrate de importar esto
+
 @Composable
 fun AppNav() {
     val navController = rememberNavController()
@@ -42,9 +29,22 @@ fun AppNav() {
             RegisterScreen(navController = navController)
         }
 
+
+        composable(
+            route = "create_shop/{userEmail}",
+            arguments = listOf(
+                navArgument("userEmail") { type = NavType.StringType }
+            )
+        ) { backStackEntry ->
+            val email = backStackEntry.arguments?.getString("userEmail") ?: ""
+            CreateShopScreen(navController = navController, userEmail = email)
+        }
+        // ---------------------------------------------
+
         composable(RootRoute.Main.route) {
             MainContainer(R.drawable.app_logo, navController = navController)
         }
+
         composable("about") {
             AboutScreen(navController = navController)
         }
@@ -52,9 +52,11 @@ fun AppNav() {
         composable("add_employee_qr") {
             AddEmployeeByQRScreen(navController)
         }
+
         composable("add_customer_email") {
             AddTrustedCustomerScreen(navController)
         }
+
         composable(
             route = "add_customer_email?scannedEmail={scannedEmail}",
             arguments = listOf(

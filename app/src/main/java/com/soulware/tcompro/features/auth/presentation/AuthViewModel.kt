@@ -1,4 +1,3 @@
-
 package com.soulware.tcompro.features.auth.presentation
 
 import androidx.lifecycle.ViewModel
@@ -12,11 +11,14 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-enum class AuthStatus { IDLE, LOADING, SUCCESS_LOGIN, SUCCESS_REGISTER, ERROR }
+enum class AuthStatus {
+    IDLE, LOADING, SUCCESS_LOGIN, SUCCESS_LOGIN_NO_SHOP, SUCCESS_REGISTER, ERROR
+}
 
 data class AuthUiState(
     val status: AuthStatus = AuthStatus.IDLE,
-    val errorMessage: String = ""
+    val errorMessage: String = "",
+    val userEmail: String = ""
 )
 
 @HiltViewModel
@@ -35,11 +37,19 @@ class AuthViewModel @Inject constructor(
             val result = repository.login(email, pass)
 
             if (result != null) {
-                _uiState.value = AuthUiState(status = AuthStatus.SUCCESS_LOGIN)
+                if (result.role == "SHOP_OWNER" && (result.shopId == 0L || result.shopId == null)) {
+                    _uiState.value = AuthUiState(
+                        status = AuthStatus.SUCCESS_LOGIN_NO_SHOP,
+                        userEmail = email
+                    )
+                } else {
+                    // Todo normal -> Ir al Home
+                    _uiState.value = AuthUiState(status = AuthStatus.SUCCESS_LOGIN)
+                }
             } else {
                 _uiState.value = AuthUiState(
                     status = AuthStatus.ERROR,
-                    errorMessage = "Invalid credentials or network error."
+                    errorMessage = "Credenciales inválidas o error de red."
                 )
             }
         }
@@ -63,10 +73,9 @@ class AuthViewModel @Inject constructor(
             } else {
                 _uiState.value = AuthUiState(
                     status = AuthStatus.ERROR,
-                    errorMessage = "Error al crear cuenta. Verifique los datos."
+                    errorMessage = "No se pudo crear la cuenta."
                 )
             }
         }
     }
-
 }

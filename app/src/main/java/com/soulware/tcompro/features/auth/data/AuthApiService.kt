@@ -1,14 +1,4 @@
-/*
- * AuthApiService (Servicio de API de Autenticación)
- *
- * Define la interfaz de Retrofit para comunicarse con la API de autenticación
- * de Supabase.
- *
- * Funcionalidades:
- * - Define los endpoints para 'signIn' (login) y 'signUp' (registro).
- * - Define los modelos de datos (DTOs) para las peticiones (AuthRequest)
- * y las respuestas (AuthResponse) que se mapean al JSON de Supabase.
- */
+
 package com.soulware.tcompro.features.auth.data
 
 import com.google.gson.annotations.SerializedName

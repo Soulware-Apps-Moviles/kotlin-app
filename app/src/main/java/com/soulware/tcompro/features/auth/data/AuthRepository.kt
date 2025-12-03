@@ -23,7 +23,6 @@ class AuthRepository @Inject constructor(
 
     suspend fun login(email: String, pass: String): AuthResult? {
         return try {
-            // 1. Login Supabase
             val request = AuthRequest(email, pass)
             val response = authApi.signIn(request)
 
@@ -37,24 +36,19 @@ class AuthRepository @Inject constructor(
             var shopId: Long = 0
             var role: String = ""
 
-            // 2. Intentar como DUEÑO
             try {
-                // A. Obtenemos perfil de dueño
                 val owner = profileApi.getOwnerByEmail(formattedToken, userEmail)
                 role = "SHOP_OWNER"
 
-                // B. Obtenemos SU tienda (Paso extra necesario)
                 try {
                     val shop = shopApi.getShopByOwnerId(formattedToken, owner.id)
                     shopId = shop.id
                 } catch (e: Exception) {
-                    // Si falla aquí, es un dueño registrado PERO que aún no creó su tienda.
-                    // Dejamos shopId en 0 para que la app le pida crearla luego.
+
                     shopId = 0
                 }
 
             } catch (e: Exception) {
-                // 3. Si falla, intentar como EMPLEADO
                 try {
                     val shopkeeper = shopApi.getShopkeeperByEmail(formattedToken, userEmail)
                     shopId = shopkeeper.shopId ?: 0L
@@ -64,7 +58,6 @@ class AuthRepository @Inject constructor(
                 }
             }
 
-            // 4. Guardar Sesión
             sessionManager.saveSession(accessToken, shopId, role)
 
             AuthResult(authId, userEmail, accessToken, shopId, role)

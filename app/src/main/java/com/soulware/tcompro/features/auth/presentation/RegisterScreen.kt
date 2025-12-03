@@ -160,7 +160,6 @@ fun RegisterScreen(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                // Opción DUEÑO
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier
@@ -177,7 +176,6 @@ fun RegisterScreen(
                     Text("Dueño")
                 }
 
-                // Opción PERSONAL
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier

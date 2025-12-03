@@ -1,19 +1,3 @@
-/*
- * LoginScreen (Pantalla de Inicio de Sesión)
- *
- * Este Composable define la UI para la pantalla de Login.
- * Se encarga de recoger el email y la contraseña del usuario.
- *
- * Funcionalidades:
- * - Muestra el logo de la app, campos de texto para email y contraseña.
- * - Inyecta el 'AuthViewModel' (Hilt) para manejar la lógica de autenticación.
- * - Observa el 'uiState' del ViewModel para reaccionar a cambios (LOADING, ERROR, SUCCESS).
- * - En 'LaunchedEffect', maneja el resultado de la autenticación:
- * - SUCCESS_LOGIN: Navega a la pantalla principal ("main_container").
- * - ERROR: Muestra un Toast con el mensaje de error.
- * - Llama a 'viewModel.login()' cuando el usuario presiona el botón de Login.
- * - Proporciona un botón para navegar a la pantalla de Registro ("register").
- */
 package com.soulware.tcompro.features.auth.presentation
 
 import android.widget.Toast
@@ -61,6 +45,12 @@ fun LoginScreen(
                     popUpTo("login") { inclusive = true }
                 }
             }
+            AuthStatus.SUCCESS_LOGIN_NO_SHOP -> {
+                val userEmail = uiState.userEmail
+                navController.navigate("create_shop/$userEmail") {
+                    popUpTo("login") { inclusive = true }
+                }
+            }
             AuthStatus.ERROR -> {
                 Toast.makeText(context, uiState.errorMessage, Toast.LENGTH_SHORT).show()
             }
@@ -86,12 +76,12 @@ fun LoginScreen(
             Spacer(modifier = Modifier.height(24.dp))
 
             Text(
-                text = "Welcome Back",
+                text = "Bienvenido",
                 style = MaterialTheme.typography.headlineMedium,
                 fontWeight = FontWeight.Bold
             )
             Text(
-                text = "Login to your account",
+                text = "Inicia sesión en tu cuenta",
                 style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
@@ -114,7 +104,7 @@ fun LoginScreen(
                 value = password,
                 onValueChange = { password = it },
                 modifier = Modifier.fillMaxWidth(),
-                label = { Text("Password") },
+                label = { Text("Contraseña") },
                 leadingIcon = { Icon(Icons.Default.Lock, contentDescription = null) },
                 visualTransformation = PasswordVisualTransformation(),
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
@@ -140,7 +130,7 @@ fun LoginScreen(
                         color = MaterialTheme.colorScheme.onPrimary
                     )
                 } else {
-                    Text("Login", style = MaterialTheme.typography.bodyLarge)
+                    Text("Ingresar", style = MaterialTheme.typography.bodyLarge)
                 }
             }
 
@@ -150,7 +140,7 @@ fun LoginScreen(
                 onClick = { navController.navigate("register") },
                 enabled = uiState.status != AuthStatus.LOADING
             ) {
-                Text("Don't have an account? Register")
+                Text("¿No tienes cuenta? Regístrate")
             }
         }
     }

@@ -1,5 +1,6 @@
 package com.soulware.tcompro.features.shop.data
 
+import com.google.gson.annotations.SerializedName
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
@@ -10,21 +11,24 @@ import retrofit2.http.Query
 
 interface ShopApiService {
 
-    // --- NUEVO: Obtener la tienda usando el ID del Dueño ---
+    @POST("shops/v1/")
+    suspend fun createShop(
+        @Header("Authorization") token: String,
+        @Body request: CreateShopRequest
+    ): ShopResource
+
     @GET("shops/v1/by-owner/{ownerId}")
     suspend fun getShopByOwnerId(
-        @Header("Authorization") token: String, // Requiere token
+        @Header("Authorization") token: String,
         @Path("ownerId") ownerId: Long
     ): ShopResource
 
-    // --- CORREGIDO: Ruta sin "email" al final ---
     @GET("shopkeepers/v1/")
     suspend fun getShopkeeperByEmail(
         @Header("Authorization") token: String,
         @Query("email") email: String
     ): ShopkeeperResource
 
-    // ... (Tus otros endpoints hire, fire, getShopkeepers siguen igual) ...
     @GET("api/v1/shops/{shopId}/shopkeepers")
     suspend fun getShopkeepers(@Path("shopId") shopId: String): List<ShopkeeperResponse>
 
@@ -35,32 +39,24 @@ interface ShopApiService {
     suspend fun fireShopkeeper(@Path("shopId") shopId: String, @Path("shopkeeperId") shopkeeperId: Long): Unit
 }
 
-// --- Data Classes ---
+data class CreateShopRequest(
+    @SerializedName("OwnerId") val ownerId: Long,
+
+    val paymentMethods: List<String>,
+    val pickupMethods: List<String>,
+    val maxCreditPerCustomer: Double,
+
+    val name: String,
+    val latitude: Double,
+    val longitude: Double
+)
 
 data class ShopResource(
     val id: Long,
-    val name: String,
-    val ruc: String?,
-    val address: String?,
-    val logoUrl: String?,
+    val name: String?,
     val ownerId: Long
 )
 
-data class ShopkeeperResource(
-    val id: Long,
-    val profileId: String,
-    val shopId: Long?
-)
-
-data class ShopkeeperResponse(
-    val id: Long,
-    val shopId: Long,
-    val authId: String,
-    val firstName: String,
-    val lastName: String,
-    val email: String,
-    val phone: String,
-    val isHired: Boolean
-)
-
+data class ShopkeeperResource(val id: Long, val profileId: String, val shopId: Long?)
+data class ShopkeeperResponse(val id: Long, val shopId: Long, val authId: String, val firstName: String, val lastName: String, val email: String, val phone: String, val isHired: Boolean)
 data class HireShopkeeperRequest(val authId: String)
