@@ -22,6 +22,9 @@
             <!--Shop-->
             <string name="label_trusted_customers">Clientes Confiables</string>
             <string name="label_staff">Personal</string>
+            <!--Finances-->
+            <string name="label_creditors">Deudores</string>
+            <string name="label_transaction_history">Historial</string>
         <!--Accessibility-->
         <string name="desc_orders_tab">Recibir, procesar y despachar pedidos de clientes</string>
         <string name="desc_inventory_tab">Gestionar inventario, añadir artículos del catálogo y configurar ofertas especiales</string>
