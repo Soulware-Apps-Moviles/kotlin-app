@@ -1,5 +1,6 @@
 package com.soulware.tcompro.features.inventory.presentation.catalog
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.soulware.tcompro.features.inventory.domain.model.Product
@@ -13,10 +14,11 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ProductViewModel @Inject constructor(
-    private val repository: ProductRepository
+    private val repository: ProductRepository,
+    savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
-    private val shopId = 10004
+    private val shopId: Int = savedStateHandle.get<Int>("shopId") ?: 0
 
     private val _allProducts = MutableStateFlow<List<Product>>(emptyList())
 
