@@ -35,5 +35,4 @@ data class OwnerResource(
     val lastName: String,
     val email: String,
     val phone: String,
-    val shopId: Long
 )

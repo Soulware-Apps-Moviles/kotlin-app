@@ -10,31 +10,41 @@ import retrofit2.http.Query
 
 interface ShopApiService {
 
-    @GET("api/v1/shops/{shopId}/shopkeepers")
-    suspend fun getShopkeepers(
-        @Path("shopId") shopId: String
-    ): List<ShopkeeperResponse>
+    // --- NUEVO: Obtener la tienda usando el ID del Dueño ---
+    @GET("shops/v1/by-owner/{ownerId}")
+    suspend fun getShopByOwnerId(
+        @Header("Authorization") token: String, // Requiere token
+        @Path("ownerId") ownerId: Long
+    ): ShopResource
 
-    @POST("api/v1/shops/{shopId}/shopkeepers")
-    suspend fun hireShopkeeper(
-        @Path("shopId") shopId: String,
-        @Body request: HireShopkeeperRequest
-    ): ShopkeeperResponse
-
-    @DELETE("api/v1/shops/{shopId}/shopkeepers/{shopkeeperId}")
-    suspend fun fireShopkeeper(
-        @Path("shopId") shopId: String,
-        @Path("shopkeeperId") shopkeeperId: Long
-    ): Unit
-
-    @GET("shopkeepers/v1/email")
+    // --- CORREGIDO: Ruta sin "email" al final ---
+    @GET("shopkeepers/v1/")
     suspend fun getShopkeeperByEmail(
         @Header("Authorization") token: String,
         @Query("email") email: String
     ): ShopkeeperResource
+
+    // ... (Tus otros endpoints hire, fire, getShopkeepers siguen igual) ...
+    @GET("api/v1/shops/{shopId}/shopkeepers")
+    suspend fun getShopkeepers(@Path("shopId") shopId: String): List<ShopkeeperResponse>
+
+    @POST("api/v1/shops/{shopId}/shopkeepers")
+    suspend fun hireShopkeeper(@Path("shopId") shopId: String, @Body request: HireShopkeeperRequest): ShopkeeperResponse
+
+    @DELETE("api/v1/shops/{shopId}/shopkeepers/{shopkeeperId}")
+    suspend fun fireShopkeeper(@Path("shopId") shopId: String, @Path("shopkeeperId") shopkeeperId: Long): Unit
 }
 
-// --- CLASES FUERA DE LA INTERFAZ ---
+// --- Data Classes ---
+
+data class ShopResource(
+    val id: Long,
+    val name: String,
+    val ruc: String?,
+    val address: String?,
+    val logoUrl: String?,
+    val ownerId: Long
+)
 
 data class ShopkeeperResource(
     val id: Long,
@@ -53,6 +63,4 @@ data class ShopkeeperResponse(
     val isHired: Boolean
 )
 
-data class HireShopkeeperRequest(
-    val authId: String
-)
+data class HireShopkeeperRequest(val authId: String)
