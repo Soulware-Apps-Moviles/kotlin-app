@@ -9,6 +9,7 @@ import androidx.navigation.navArgument
 import com.soulware.tcompro.R
 import com.soulware.tcompro.features.auth.presentation.LoginScreen
 import com.soulware.tcompro.features.auth.presentation.RegisterScreen
+import com.soulware.tcompro.features.orders.presentation.detail.OrderDetailScreen
 import com.soulware.tcompro.features.shop.presentation.AddEmployeeByCodeScreen
 import com.soulware.tcompro.features.shop.presentation.AddEmployeeByQRScreen
 import com.soulware.tcompro.features.shop.presentation.AddTrustedCustomerScreen
@@ -79,6 +80,15 @@ fun AppNav() {
             )
         ) {
             AddEmployeeByCodeScreen(navController)
+        }
+
+        // ORDER DETAIL (TU FEATURE NUEVO)
+        composable("orderDetail/{id}") { backStackEntry ->
+            val orderId = backStackEntry.arguments?.getString("id")?.toInt() ?: 0
+            OrderDetailScreen(
+                orderId = orderId,
+                onBackClick = { navController.popBackStack() }
+            )
         }
     }
 }

@@ -37,7 +37,7 @@ import com.soulware.tcompro.core.data.SessionManager
 import com.soulware.tcompro.core.ui.components.LogoContent
 import com.soulware.tcompro.features.finances.presentation.FinancesScreen
 import com.soulware.tcompro.features.inventory.presentation.InventoryScreen
-import com.soulware.tcompro.features.orders.presentation.OrdersScreen
+import com.soulware.tcompro.features.orders.presentation.OrdersNavGraph
 import com.soulware.tcompro.features.settings.presentation.SettingsScreen
 import com.soulware.tcompro.features.shop.presentation.ShopScreen
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -167,7 +167,11 @@ fun MainContainer(
             modifier = Modifier.padding(paddingValues)
         ) {
             composable(MainTabRoute.Orders.route) {
-                OrdersScreen()
+                val ordersNavController = rememberNavController()
+                OrdersNavGraph(
+                    navController = ordersNavController,
+                    rootNavController = navController as NavHostController
+                )
             }
             composable(MainTabRoute.Inventory.route) {
                 InventoryScreen()

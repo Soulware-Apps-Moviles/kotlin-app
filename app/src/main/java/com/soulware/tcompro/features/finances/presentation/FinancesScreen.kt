@@ -12,12 +12,31 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import com.soulware.tcompro.R
+import com.soulware.tcompro.core.ITabRoute
+import com.soulware.tcompro.core.TwoTabScreen
 import com.soulware.tcompro.features.finances.domain.models.Debt
 import com.soulware.tcompro.features.finances.domain.models.Payment
 
+// ---------------------------
+// Tabs
+// ---------------------------
+sealed class FinancesTab(
+    override val route: String,
+    @androidx.annotation.StringRes override val labelResId: Int
+) : ITabRoute {
+
+    object Creditors : FinancesTab("creditors_tab", R.string.label_creditors)
+    object History : FinancesTab("history_tab", R.string.label_transaction_history)
+}
+
+// ---------------------------
+// Screen
+// ---------------------------
 @Composable
 fun FinancesScreen(
     viewModel: FinancesViewModel = hiltViewModel()
@@ -32,75 +51,92 @@ fun FinancesScreen(
         viewModel.loadFinances()
     }
 
+    val tabs = listOf(
+        FinancesTab.Creditors,
+        FinancesTab.History
+    )
+
     when {
         isLoading -> Box(Modifier.fillMaxSize(), Alignment.Center) {
             CircularProgressIndicator()
         }
 
         errorMessage != null -> Box(Modifier.fillMaxSize(), Alignment.Center) {
-            Text(errorMessage ?: "Unexpected error", color = MaterialTheme.colorScheme.error)
+            Text(text = errorMessage ?: "Unexpected error", color = MaterialTheme.colorScheme.error)
         }
 
-        else -> FinancesContent(
-            payments = payments,
-            debts = debts,
-            totalRevenue = totalRevenue,
-            onMarkPaid = viewModel::markDebtAsPaid
-        )
+        else -> Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(MaterialTheme.colorScheme.surface)
+        ) {
+            // Header
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 20.dp, vertical = 16.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    "Finances",
+                    style = MaterialTheme.typography.bodyLarge.copy(
+                        fontSize = 26.sp,
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
+                )
+                Icon(
+                    imageVector = Icons.Outlined.BarChart,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.size(28.dp)
+                )
+            }
+
+            TotalRevenueCard(totalRevenue)
+
+            Spacer(Modifier.height(20.dp))
+
+            // ---------------------------
+            // Tabs (correct usage)
+            // ---------------------------
+            TwoTabScreen(
+                tabs = tabs, // <-- FIXED: pass ITabRoute list directly
+                content1 = {
+                    CreditorsTab(
+                        debts = debts,
+                        onMarkPaid = viewModel::markDebtAsPaid
+                    )
+                },
+                content2 = {
+                    HistoryTab(
+                        payments = payments
+                    )
+                }
+            )
+        }
     }
 }
 
+// ---------------------------
+// Tabs Content
+// ---------------------------
 @Composable
-private fun FinancesContent(
-    payments: List<Payment>,
+private fun CreditorsTab(
     debts: List<Debt>,
-    totalRevenue: Double,
     onMarkPaid: (Int) -> Unit
 ) {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(MaterialTheme.colorScheme.surface)
-            .padding(horizontal = 20.dp, vertical = 16.dp)
+            .padding(horizontal = 20.dp)
     ) {
-        // Header
-        Row(
-            Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(
-                "Finances",
-                style = MaterialTheme.typography.bodyLarge.copy(
-                    fontSize = 26.sp,
-                    color = MaterialTheme.colorScheme.onSurface
-                )
-            )
-            Icon(
-                imageVector = Icons.Outlined.BarChart,
-                contentDescription = "Stats",
-                tint = MaterialTheme.colorScheme.primary,
-                modifier = Modifier.size(28.dp)
-            )
-        }
-
-        Spacer(modifier = Modifier.height(24.dp))
-
-        // TOTAL REVENUE
-        TotalRevenueCard(totalRevenue)
-
-        Spacer(modifier = Modifier.height(30.dp))
-
-        // CREDITORS
-        SectionTitle("Creditors")
-
-        Spacer(modifier = Modifier.height(10.dp))
+        SectionTitle(text = stringResource(id = R.string.label_creditors))
+        Spacer(Modifier.height(12.dp))
 
         LazyColumn(
             verticalArrangement = Arrangement.spacedBy(12.dp),
-            modifier = Modifier
-                .fillMaxWidth()
-                .weight(1f)
+            modifier = Modifier.fillMaxSize()
         ) {
             items(debts.filter { it.status == "PENDING" }) { debt ->
                 CreditorItem(
@@ -111,32 +147,40 @@ private fun FinancesContent(
                 )
             }
         }
+    }
+}
 
-        Spacer(modifier = Modifier.height(20.dp))
-
-        // TRANSACTION HISTORY
-        SectionTitle("Transaction History")
-
-        Spacer(modifier = Modifier.height(10.dp))
+@Composable
+private fun HistoryTab(
+    payments: List<Payment>
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(horizontal = 20.dp)
+    ) {
+        SectionTitle(text = stringResource(id = R.string.label_transaction_history))
+        Spacer(Modifier.height(12.dp))
 
         LazyColumn(
             verticalArrangement = Arrangement.spacedBy(10.dp),
-            modifier = Modifier
-                .fillMaxWidth()
-                .weight(1f)
+            modifier = Modifier.fillMaxSize()
         ) {
             items(payments) { payment ->
                 TransactionItem(
                     title = "Payment #${payment.id}",
                     date = "Order: ${payment.orderId}",
                     amount = "+S/${"%.2f".format(payment.amount)}",
-                    color = Color(0xFF2E7D32) // green
+                    color = Color(0xFF2E7D32)
                 )
             }
         }
     }
 }
 
+// ---------------------------
+// Components
+// ---------------------------
 @Composable
 private fun TotalRevenueCard(totalRevenue: Double) {
     Surface(
@@ -146,7 +190,6 @@ private fun TotalRevenueCard(totalRevenue: Double) {
     ) {
         Column(Modifier.padding(16.dp)) {
             Text("Total Revenue", color = MaterialTheme.colorScheme.primary, fontSize = 16.sp)
-
             Text(
                 "S/ ${"%.2f".format(totalRevenue)}",
                 color = MaterialTheme.colorScheme.onSurface,

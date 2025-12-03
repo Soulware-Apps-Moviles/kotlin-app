@@ -1,7 +1,7 @@
-package com.soulware.tcompro.features.finances.di
+package com.soulware.tcompro.features.orders.di
 
 import com.soulware.tcompro.core.di.TcomproApi
-import com.soulware.tcompro.features.finances.data.remote.services.FinanceService
+import com.soulware.tcompro.features.orders.data.remote.services.OrderService
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -17,7 +17,8 @@ import javax.inject.Singleton
 object RemoteModule {
     @Provides
     @Singleton
-    fun provideFinanceApiService(@TcomproApi retrofit: Retrofit): FinanceService {
-        return retrofit.create(FinanceService::class.java)
+    fun provideOrdersApiService(@TcomproApi retrofit: Retrofit): OrderService {
+        return retrofit.create(OrderService::class.java)
     }
 }
+
