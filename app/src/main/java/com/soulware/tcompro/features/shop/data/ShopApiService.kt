@@ -57,6 +57,15 @@ data class ShopResource(
     val ownerId: Long
 )
 
-data class ShopkeeperResource(val id: Long, val profileId: String, val shopId: Long?)
+data class ShopkeeperResource(
+    val id: Long,
+    val authId: String,
+    val firstName: String,
+    val lastName: String,
+    val email: String,
+    val phone: String,
+    val shopId: Long?
+)
+
 data class ShopkeeperResponse(val id: Long, val shopId: Long, val authId: String, val firstName: String, val lastName: String, val email: String, val phone: String, val isHired: Boolean)
 data class HireShopkeeperRequest(val authId: String)

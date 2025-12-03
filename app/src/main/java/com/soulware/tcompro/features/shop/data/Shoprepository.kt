@@ -57,7 +57,7 @@ class ShopRepository @Inject constructor(
             val token = sessionManager.userSessionFlow.first().accessToken ?: return null
             val formattedToken = "Bearer $token"
             val resource = api.getShopkeeperByEmail(formattedToken, email)
-            val request = HireShopkeeperRequest(authId = resource.profileId)
+            val request = HireShopkeeperRequest(authId = resource.authId)
             val response = api.hireShopkeeper(shopId, request)
             Employee(response.id, "${response.firstName} ${response.lastName}", "Shopkeeper", "")
         } catch (e: Exception) {
