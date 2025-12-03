@@ -8,7 +8,11 @@ import retrofit2.http.Query
 
 interface OrderService {
     @GET("orders/v1")
-    suspend fun getOrders(@Query("status") status: String? = null): OrderWrapperDto
+    suspend fun getOrders(
+        @Query("shopId") shopId: Long,
+        @Query("status") status: String? = null,
+
+    ): OrderWrapperDto
 
     @POST("orders/v1/{id}/accept")
     suspend fun acceptOrder(@Path("id") orderId: Int)
