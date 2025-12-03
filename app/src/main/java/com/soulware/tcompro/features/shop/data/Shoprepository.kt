@@ -13,6 +13,9 @@ class ShopRepository @Inject constructor(
     private val profileApi: ProfileApiService,
     private val sessionManager: SessionManager
 ) {
+
+
+
     suspend fun createShopForOwner(
         name: String,
         latitude: Double,
@@ -47,18 +50,48 @@ class ShopRepository @Inject constructor(
 
     suspend fun getShopkeepers(shopId: String): List<Employee> {
         return try {
-            val response = api.getShopkeepers(shopId)
-            response.map { Employee(it.id, "${it.firstName} ${it.lastName}", "Shopkeeper", "") }
-        } catch (e: Exception) { emptyList() }
+            // 1. Obtenemos el token de sesión (igual que en hireShopkeeper)
+            val token = sessionManager.userSessionFlow.first().accessToken ?: return emptyList()
+            val formattedToken = "Bearer $token"
+
+            // 2. Convertimos el ID a Long
+            val shopIdLong = shopId.toLongOrNull() ?: return emptyList()
+
+            // 3. Llamamos a la API con el token y el ID correcto
+            val response = api.getShopkeepers(formattedToken, shopIdLong)
+
+            // 4. Mapeamos la respuesta para la pantalla
+            response
+                .filter { it.isHired == true }
+                .map {
+                Employee(
+                    id = it.id,
+                    name = "${it.firstName} ${it.lastName}",
+                    role = "Shopkeeper",
+                    imageUrl = ""
+                )
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            emptyList() // Si falla, devuelve lista vacía (por eso veías "No staff members")
+        }
     }
 
     suspend fun hireShopkeeperByEmail(shopId: String, email: String): Employee? {
         return try {
+            // Obtener el token
             val token = sessionManager.userSessionFlow.first().accessToken ?: return null
             val formattedToken = "Bearer $token"
-            val resource = api.getShopkeeperByEmail(formattedToken, email)
-            val request = HireShopkeeperRequest(authId = resource.authId)
-            val response = api.hireShopkeeper(shopId, request)
+
+            // Preparar el request con los datos que pide el Java: HireShopkeeperResource(Long shopId, String email)
+            // Asegúrate de convertir el shopId a Long
+            val shopIdLong = shopId.toLongOrNull() ?: return null
+            val request = HireShopkeeperRequest(shopId = shopIdLong, email = email)
+
+            // Llamar al endpoint corregido
+            val response = api.hireShopkeeper(formattedToken, request)
+
+            // Mapear la respuesta a tu objeto de dominio Employee
             Employee(response.id, "${response.firstName} ${response.lastName}", "Shopkeeper", "")
         } catch (e: Exception) {
             e.printStackTrace()

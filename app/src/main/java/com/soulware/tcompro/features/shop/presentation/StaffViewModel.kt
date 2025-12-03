@@ -2,6 +2,7 @@ package com.soulware.tcompro.features.shop.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.room.Query
 import com.soulware.tcompro.core.data.SessionManager // <-- NUEVO IMPORT
 import kotlinx.coroutines.flow.first
 import com.soulware.tcompro.features.shop.data.ShopRepository
@@ -16,7 +17,8 @@ import javax.inject.Inject
 
 data class StaffScreenState(
     val isLoading: Boolean = false,
-    val employees: List<Employee> = emptyList()
+    val employees: List<Employee> = emptyList(),
+    val searchQuery: String=""
 )
 
 @HiltViewModel
@@ -27,6 +29,8 @@ class StaffViewModel @Inject constructor(
 
     private val _uiState = MutableStateFlow(StaffScreenState(isLoading = true)) // Inicia cargando
     val uiState: StateFlow<StaffScreenState> = _uiState.asStateFlow()
+
+    private var allEmployees: List<Employee> = emptyList()
 
     init {
         loadStaff()
@@ -45,27 +49,42 @@ class StaffViewModel @Inject constructor(
                 _uiState.value = StaffScreenState(isLoading = false, employees = emptyList())
                 return@launch
             }
+// Guardamos la lista completa en nuestra variable privada
+            allEmployees = repository.getShopkeepers(shopId.toString())
 
-            // 3. Usamos el shopId real
-            val employees = repository.getShopkeepers(shopId = shopId.toString())
-            // ---------------------------
-
-            _uiState.value = StaffScreenState(isLoading = false, employees = employees)
+            // Al cargar, mostramos la lista completa (filtrando por si ya había texto escrito)
+            filterEmployees(_uiState.value.searchQuery)
         }
+    }
+    fun onSearchQueryChanged(query: String) {
+        filterEmployees(query)
+    }
+    private fun filterEmployees(query: String) {
+        val filteredList = if (query.isBlank()) {
+            allEmployees
+        } else {
+            allEmployees.filter { it.name.contains(query, ignoreCase = true) }
+        }
+
+        _uiState.value = _uiState.value.copy(
+            searchQuery = query,
+            employees = filteredList,
+            isLoading = false
+        )
     }
 
     fun deleteEmployee(employeeId: Long) {
         viewModelScope.launch {
-            // --- ¡DEJAMOS DE SIMULAR! ---
-            val shopId = sessionManager.userSessionFlow.first().shopId
-            if (shopId == null) { /* TODO: Error de session */ return@launch }
+            val shopId = sessionManager.userSessionFlow.first().shopId ?: return@launch
 
-            val success = repository.deleteEmployee(shopId = shopId.toString(), shopkeeperId = employeeId)
+            _uiState.value = _uiState.value.copy(isLoading = true)
+
+            val success = repository.deleteEmployee(shopId.toString(), employeeId)
 
             if (success) {
                 loadStaff()
             } else {
-                // TODO: Mostrar un mensaje de error al usuario
+                _uiState.value = _uiState.value.copy(isLoading = false)
             }
         }
     }

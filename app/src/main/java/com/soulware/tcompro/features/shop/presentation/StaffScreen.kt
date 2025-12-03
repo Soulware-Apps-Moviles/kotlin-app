@@ -25,6 +25,7 @@ import androidx.compose.material.icons.filled.Numbers
 import androidx.compose.material.icons.filled.PersonAdd
 import androidx.compose.material.icons.filled.QrCode
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -38,7 +39,9 @@ import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -49,21 +52,19 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.soulware.tcompro.R
 import com.soulware.tcompro.core.ui.theme.TcomproTheme
 import com.soulware.tcompro.features.shop.domain.Employee
-
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.ui.platform.LocalLifecycleOwner
-import androidx.lifecycle.Lifecycle
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -74,16 +75,18 @@ fun StaffScreen(
 
     var isFabMenuExpanded by remember { mutableStateOf(false) }
 
+    // Estados para el diálogo de confirmación de eliminación
+    var showDeleteDialog by remember { mutableStateOf(false) }
+    var employeeToDeleteId by remember { mutableStateOf<Long?>(null) }
 
     val uiState by viewModel.uiState.collectAsState()
-
     val employees = uiState.employees
 
     val lifecycle = LocalLifecycleOwner.current.lifecycle
     val lifecycleState by lifecycle.currentStateFlow.collectAsState()
 
+    // Recargar la lista cada vez que la pantalla vuelve a estar visible
     LaunchedEffect(lifecycleState) {
-
         if (lifecycleState == Lifecycle.State.RESUMED) {
             viewModel.loadStaff()
         }
@@ -98,9 +101,12 @@ fun StaffScreen(
                     .padding(paddingValues)
                     .padding(horizontal = 16.dp)
             ) {
+                // --- BUSCADOR CORREGIDO ---
                 OutlinedTextField(
-                    value = "",
-                    onValueChange = { },
+                    value = uiState.searchQuery, // Conectado al estado del ViewModel
+                    onValueChange = { newQuery ->
+                        viewModel.onSearchQueryChanged(newQuery) // Notifica cambios al ViewModel
+                    },
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(top = 16.dp),
@@ -126,6 +132,7 @@ fun StaffScreen(
                         CircularProgressIndicator()
                     }
                 } else if (employees.isEmpty()) {
+                    // Si no hay empleados (o el filtro no encuentra nada), mostramos la vista vacía
                     EmptyStaffView()
                 } else {
                     LazyColumn(
@@ -138,7 +145,10 @@ fun StaffScreen(
                             EmployeeItem(
                                 employee = employee,
                                 onDeleteClick = {
-                                    viewModel.deleteEmployee(employee.id)                                }
+                                    // Al hacer clic en borrar, guardamos el ID y mostramos el diálogo
+                                    employeeToDeleteId = employee.id
+                                    showDeleteDialog = true
+                                }
                             )
                         }
                     }
@@ -146,6 +156,42 @@ fun StaffScreen(
             }
         }
 
+        // --- DIÁLOGO DE CONFIRMACIÓN ---
+        if (showDeleteDialog) {
+            AlertDialog(
+                onDismissRequest = {
+                    showDeleteDialog = false
+                    employeeToDeleteId = null
+                },
+                title = { Text(text = "Despedir empleado") },
+                text = { Text(text = "¿Estás seguro de que deseas eliminar a este empleado de tu tienda? Esta acción no se puede deshacer.") },
+                confirmButton = {
+                    TextButton(
+                        onClick = {
+                            employeeToDeleteId?.let { id ->
+                                viewModel.deleteEmployee(id)
+                            }
+                            showDeleteDialog = false
+                            employeeToDeleteId = null
+                        }
+                    ) {
+                        Text("Eliminar", color = MaterialTheme.colorScheme.error)
+                    }
+                },
+                dismissButton = {
+                    TextButton(
+                        onClick = {
+                            showDeleteDialog = false
+                            employeeToDeleteId = null
+                        }
+                    ) {
+                        Text("Cancelar")
+                    }
+                }
+            )
+        }
+
+        // --- FONDO OSCURO CUANDO EL MENÚ FAB ESTÁ ABIERTO ---
         if (isFabMenuExpanded) {
             Surface(
                 modifier = Modifier
@@ -159,6 +205,7 @@ fun StaffScreen(
             ) {}
         }
 
+        // --- MENÚ FLOTANTE (FAB) ---
         Column(
             modifier = Modifier
                 .align(Alignment.BottomEnd)
@@ -216,7 +263,7 @@ private fun EmployeeItem(
             modifier = Modifier.padding(12.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // TODO: Reemplazar esto con Coil para cargar 'employee.imageUrl'
+            // TODO: Reemplazar esto con Coil si tienes URL real en 'employee.imageUrl'
             Image(
                 painter = painterResource(id = R.drawable.app_logo),
                 contentDescription = "Employee photo",
@@ -325,7 +372,6 @@ private fun SpeedDialButton(
         }
     }
 }
-
 
 @Preview(showBackground = true)
 @Composable
