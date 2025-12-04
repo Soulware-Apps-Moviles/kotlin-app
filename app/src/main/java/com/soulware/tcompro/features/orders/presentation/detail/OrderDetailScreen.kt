@@ -67,7 +67,7 @@ fun OrderDetailScreen(
             order = order!!,
             onBackClick = onBackClick,
             onCancelOrder = { viewModel.cancelOrder(orderId) },
-            onReadyForPickup = { viewModel.advanceOrder(orderId) }
+            onReadyForPickup = { viewModel.advanceOrder(order!!) }
         )
     }
 }
@@ -78,7 +78,7 @@ fun OrderDetailContent(
     order: Order,
     onBackClick: () -> Unit,
     onCancelOrder: (Int) -> Unit,
-    onReadyForPickup: (Int) -> Unit
+    onReadyForPickup: (Order) -> Unit
 ) {
     var showCancelDialog by remember { mutableStateOf(false) }
 
@@ -141,7 +141,7 @@ fun OrderDetailContent(
                 }
 
                 Button(
-                    onClick = { onReadyForPickup(order.id) },
+                    onClick = { onReadyForPickup(order) },
                     modifier = Modifier
                         .weight(1f)
                         .height(48.dp),

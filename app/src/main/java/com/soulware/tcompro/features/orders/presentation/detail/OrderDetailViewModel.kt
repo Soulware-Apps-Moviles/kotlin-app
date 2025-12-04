@@ -54,13 +54,27 @@ class OrderDetailViewModel @Inject constructor(
         }
     }
 
-    fun advanceOrder(orderId: Int) {
+    fun advanceOrder(order: Order) {
         viewModelScope.launch {
             try {
-                repository.advanceOrder(orderId)
+                _isLoading.value = true
+
+                val steps = when (order.pickupMethod.uppercase()) {
+                    "SHOP_PICKUP" -> 2
+                    "DELIVERY" -> 3
+                    else -> 2
+                }
+
+                repeat(steps) {
+                    repository.advanceOrder(order.id)
+                }
+
                 _actionCompleted.value = true
+
             } catch (e: Exception) {
                 _errorMessage.value = "Failed to update order status"
+            } finally {
+                _isLoading.value = false
             }
         }
     }

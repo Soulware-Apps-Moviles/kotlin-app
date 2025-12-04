@@ -69,16 +69,26 @@ class PendingOrdersViewModel @Inject constructor(
         }
     }
 
-    fun advanceOrder(orderId: Int) {
+    fun advanceOrder(order: Order) {
         viewModelScope.launch {
             try {
-                repository.advanceOrder(orderId)
+                val times = when (order.pickupMethod) {
+                    "SHOP_PICKUP" -> 2 // ACCEPTED → READY → PICKED_UP
+                    "DELIVERY" -> 3    // ACCEPTED → READY → DISPATCHED → DELIVERED
+                    else -> 2
+                }
+
+                repeat(times) {
+                    repository.advanceOrder(order.id)
+                }
+
                 getPendingOrders()
             } catch (e: Exception) {
                 _errorMessage.value = "Failed to dispatch order"
             }
         }
     }
+
 
     fun cancelOrder(orderId: Int) {
         viewModelScope.launch {
