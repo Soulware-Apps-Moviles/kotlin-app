@@ -10,7 +10,7 @@ import com.soulware.tcompro.features.finances.data.local.models.DebtEntity
 interface DebtDao {
 
     @Query("SELECT * FROM debts WHERE shopId = :shopId AND status = :status")
-    suspend fun getDebts(shopId: Int, status: String): List<DebtEntity>
+    suspend fun getDebts(shopId: Long, status: String): List<DebtEntity>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertDebts(debts: List<DebtEntity>)
