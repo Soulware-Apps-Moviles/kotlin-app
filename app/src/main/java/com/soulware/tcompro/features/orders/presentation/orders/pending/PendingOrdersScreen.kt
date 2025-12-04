@@ -76,7 +76,7 @@ fun PendingOrdersScreen(
                     items(orders) { order ->
                         PendingOrderCard(
                             order = order,
-                            onDispatchClick = { viewModel.advanceOrder(order.id) },
+                            onDispatchClick = { viewModel.advanceOrder(order) },
                             onCardClick = { onOrderClick(order) }
                         )
                     }
