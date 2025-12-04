@@ -1,6 +1,6 @@
 package com.soulware.tcompro.features.inventory.presentation
 
-import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -12,13 +12,15 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import com.soulware.tcompro.features.inventory.domain.model.Product
@@ -26,56 +28,49 @@ import com.soulware.tcompro.features.inventory.domain.model.Product
 @Composable
 fun ProductCard(
     product: Product,
-    onAdd: () -> Unit,
-    onRemove: () -> Unit
+    onAdd: (() -> Unit)? = null,
+    onRemove: (() -> Unit)? = null,
+    onUpdatePrice: ((Double) -> Unit)? = null
 ) {
-    Card(
-        modifier = Modifier.fillMaxWidth()
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
+    var newPrice by remember { mutableStateOf(product.price.toString()) }
+
+    Card(modifier = Modifier.fillMaxWidth()) {
+        Row(modifier = Modifier.padding(0.dp).background(MaterialTheme.colorScheme.surface)) {
+
             AsyncImage(
                 model = product.imageUrl,
                 contentDescription = product.name,
-                modifier = Modifier.size(32.dp),
+                modifier = Modifier.size(60.dp),
                 contentScale = ContentScale.Crop
             )
+
             Spacer(modifier = Modifier.width(16.dp))
+
             Column(modifier = Modifier.weight(1f)) {
-                Text(text = product.name, style = MaterialTheme.typography.titleMedium)
-                Spacer(modifier = Modifier.height(4.dp))
-                Text(
-                    text = stringResource(id = product.category.categoryName),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-            }
-            Spacer(modifier = Modifier.width(16.dp))
-            Column(horizontalAlignment = Alignment.End) {
-                Text(
-                    text = "$${product.price}",
-                    style = MaterialTheme.typography.bodyLarge,
-                    fontWeight = FontWeight.Bold
-                )
-                Spacer(modifier = Modifier.height(4.dp))
-                Text(
-                    text = "Stock: ${product.stock}",
-                    style = MaterialTheme.typography.bodyMedium
-                )
-            }
-            Spacer(modifier = Modifier.width(16.dp))
-            Row {
-                Button(onClick = onAdd) {
-                    Text(text = "Add")
+                Text(product.name, style = MaterialTheme.typography.titleMedium)
+                product.description?.let {
+                    Text(it, style = MaterialTheme.typography.bodySmall)
                 }
-                Spacer(modifier = Modifier.width(8.dp))
-                Button(onClick = onRemove) {
-                    Text(text = "Remove")
+                Text("S/. ${product.price}")
+            }
+
+            Spacer(modifier = Modifier.width(16.dp))
+
+            Column {
+                onAdd?.let {
+                    Button(onClick = it) { Text("Add") }
+                }
+                onRemove?.let {
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Button(onClick = it) { Text("Remove") }
+                }
+                onUpdatePrice?.let {
+                    OutlinedTextField(
+                        value = newPrice,
+                        onValueChange = { newPrice = it },
+                        label = { Text("New Price") }
+                    )
+                    Button(onClick = { it(newPrice.toDouble()) }) { Text("Update") }
                 }
             }
         }

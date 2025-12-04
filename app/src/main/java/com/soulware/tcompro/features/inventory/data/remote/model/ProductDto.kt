@@ -1,12 +1,13 @@
 package com.soulware.tcompro.features.inventory.data.remote.model
 
-import com.soulware.tcompro.features.inventory.domain.model.ProductCategory
-
 data class ProductDto(
-    val id: String,
+    val id: Int?,
+    val shopId: Int,
+    val catalogProductId: Int,
     val name: String,
+    val category: String?,
     val price: Double,
-    val category: ProductCategory,
-    val stock: Int,
+    val description: String?,
+    val isAvailable: Boolean,
     val imageUrl: String?
 )
