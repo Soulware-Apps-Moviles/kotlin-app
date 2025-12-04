@@ -36,7 +36,7 @@ import com.soulware.tcompro.R
 import com.soulware.tcompro.core.data.SessionManager
 import com.soulware.tcompro.core.ui.components.LogoContent
 import com.soulware.tcompro.features.finances.presentation.FinancesScreen
-import com.soulware.tcompro.features.inventory.presentation.InventoryScreen
+import com.soulware.tcompro.features.inventory.presentation.inventory.InventoryScreen
 import com.soulware.tcompro.features.orders.presentation.OrdersNavGraph
 import com.soulware.tcompro.features.settings.presentation.SettingsScreen
 import com.soulware.tcompro.features.shop.presentation.ShopScreen
