@@ -9,7 +9,7 @@ import com.soulware.tcompro.features.finances.data.local.models.PaymentEntity
 @Dao
 interface PaymentDao {
     @Query("SELECT * FROM payments WHERE shopId = :shopId")
-    suspend fun getPayments(shopId: Int): List<PaymentEntity>
+    suspend fun getPayments(shopId: Long): List<PaymentEntity>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertPayments(payments: List<PaymentEntity>)

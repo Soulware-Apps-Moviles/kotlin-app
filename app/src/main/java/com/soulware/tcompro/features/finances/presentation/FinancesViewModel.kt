@@ -16,9 +16,6 @@ import javax.inject.Inject
 class FinancesViewModel @Inject constructor(
     private val repository: FinanceRepository
 ) : ViewModel() {
-
-    private val shopId = 10004
-
     private val _payments = MutableStateFlow<List<Payment>>(emptyList())
     val payments: StateFlow<List<Payment>> = _payments.asStateFlow()
 
@@ -44,8 +41,8 @@ class FinancesViewModel @Inject constructor(
                 _isLoading.value = true
                 _errorMessage.value = null
 
-                val paymentsList = repository.getPayments(shopId)
-                val debtsList = repository.getDebts(shopId, status = "PENDING")
+                val paymentsList = repository.getPayments()
+                val debtsList = repository.getDebts(status = "PENDING")
 
                 _payments.value = paymentsList
                 _debts.value = debtsList

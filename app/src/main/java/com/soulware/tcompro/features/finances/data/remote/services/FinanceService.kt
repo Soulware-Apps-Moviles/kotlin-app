@@ -10,12 +10,12 @@ import retrofit2.http.Query
 interface FinanceService {
     @GET("payments/v1")
     suspend fun getPayments(
-        @Query("shopId") shopId: Int
+        @Query("shopId") shopId: Long
     ): List<PaymentDto>
 
     @GET("debts/v1")
     suspend fun getDebts(
-        @Query("shopId") shopId: Int,
+        @Query("shopId") shopId: Long,
         @Query("status") status: String? = null
     ): List<DebtDto>
 

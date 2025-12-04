@@ -1,5 +1,6 @@
 package com.soulware.tcompro.features.finances.data.repository
 
+import com.soulware.tcompro.core.data.SessionManager
 import com.soulware.tcompro.features.finances.data.local.dao.DebtDao
 import com.soulware.tcompro.features.finances.data.local.dao.PaymentDao
 import com.soulware.tcompro.features.finances.data.local.models.DebtEntity
@@ -11,6 +12,8 @@ import com.soulware.tcompro.features.finances.domain.models.Debt
 import com.soulware.tcompro.features.finances.domain.models.Payment
 import com.soulware.tcompro.features.finances.domain.repository.FinanceRepository
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import java.util.UUID
 import javax.inject.Inject
@@ -18,11 +21,20 @@ import javax.inject.Inject
 class FinanceRepositoryImpl @Inject constructor(
     private val service: FinanceService,
     private val paymentDao: PaymentDao,
-    private val debtDao: DebtDao
+    private val debtDao: DebtDao,
+    private val sessionManager: SessionManager
 ) : FinanceRepository {
 
-    override suspend fun getPayments(shopId: Int): List<Payment> =
+    private fun getShopIdFromSession(): Long {
+        val shopId = runBlocking {
+            sessionManager.userSessionFlow.first().shopId
+        }
+        return shopId ?: throw IllegalStateException("El usuario no tiene un Shop ID asignado para esta operación.")
+    }
+
+    override suspend fun getPayments(): List<Payment> =
         withContext(Dispatchers.IO) {
+            val shopId = getShopIdFromSession()
             try {
                 val remotePayments = service.getPayments(shopId)
                 val entities = remotePayments.map { it.toEntity() }
@@ -40,8 +52,9 @@ class FinanceRepositoryImpl @Inject constructor(
             }
         }
 
-    override suspend fun getDebts(shopId: Int, status: String): List<Debt> =
+    override suspend fun getDebts(status: String): List<Debt> =
         withContext(Dispatchers.IO) {
+            val shopId = getShopIdFromSession()
             try {
                 val remoteDebts = service.getDebts(shopId = shopId, status = status)
                 val entities = remoteDebts.map { it.toEntity() }
